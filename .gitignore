@@ -1,0 +1,72 @@
+# ----------------------------------------------------------------------
+# 1. SISTEMA & IDEs (Global)
+# ----------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ----------------------------------------------------------------------
+# 2. PYTHON (Backend)
+# ----------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ----------------------------------------------------------------------
+# 3. NODE & JAVASCRIPT (Frontend & Docs)
+# ----------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+dist-ssr/
+coverage/
+
+# ----------------------------------------------------------------------
+# 4. VARIABLES DE ENTORNO (Seguridad Crítica)
+# ----------------------------------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# ----------------------------------------------------------------------
+# 5. DOCKER & LOGS
+# ----------------------------------------------------------------------
+docker-compose.override.yml
+*.log
+
+# ----------------------------------------------------------------------
+# 6. TERRAFORM (Infraestructura)
+# ----------------------------------------------------------------------
+.terraform/
+*.tfstate
+*.tfstate.backup
