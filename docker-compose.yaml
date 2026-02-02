@@ -17,3 +17,15 @@ services:
     # Variables de entorno básicas para Node
     environment:
       - NODE_ENV=development
+
+  docs:
+    container_name: dashboard-docs
+    image: m4r4v/frontend:latest
+    working_dir: /workspace
+    volumes:
+      - ./docs:/workspace
+    ports:
+      - "5173:5173"
+    command: pnpm dev
+    environment:
+      - NODE_ENV=development
