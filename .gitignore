@@ -40,10 +40,15 @@ htmlcov/
 # 3. NODE & JAVASCRIPT (Frontend & Docs)
 # ----------------------------------------------------------------------
 node_modules/
+# Asegura ignorar node_modules en cualquier nivel de profundidad
+**/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+# Exclusión crítica detectada en imagen
+.pnpm-store/
+frontend/.pnpm-store/
 dist/
 dist-ssr/
 coverage/

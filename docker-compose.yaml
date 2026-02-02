@@ -1,0 +1,19 @@
+services:
+  frontend:
+    container_name: dashboard-frontend
+    image: m4r4v/frontend:latest
+    # Definimos el directorio de trabajo exacto donde vive el package.json
+    working_dir: /workspace/app
+    volumes:
+      # Mapeo crítico: Host (Repo) <-> Container (Runtime)
+      - ./frontend/app:/workspace/app
+      # Exclusión: Evitamos que los node_modules del host (si existen) pisen los del contenedor
+      # O aseguramos que persistan en un volumen anónimo si se prefiere.
+      # Por ahora, usamos el mapeo directo para desarrollo simple.
+    ports:
+      - "3000:3000"
+    # Comando de inicio: Levanta el servidor Vite y expone a la red (0.0.0.0)
+    command: pnpm dev --host
+    # Variables de entorno básicas para Node
+    environment:
+      - NODE_ENV=development
