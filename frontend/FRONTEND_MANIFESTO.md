@@ -1,7 +1,7 @@
 # FRONTEND MANIFESTO
 >
 > **Ámbito:** UI/UX & Cliente Web
-> **Versión:** 1.0.0
+> **Versión:** 1.2.0 (Route Override Protocol)
 > **Dependencias:** ROOT MANIFESTO
 
 ## 1. Definición del Stack Tecnológico
@@ -30,6 +30,7 @@ El orden de los bloques es estricto e innegociable para mantener la consistencia
 1. `<template>`
 2. `<script setup lang="ts">`
 3. `<style>`
+4. `<route lang="yaml">` (Opcional, siempre al final)
 
 ### 3.2. Regla de TypeScript/ESLint
 
@@ -43,6 +44,18 @@ Aunque la lógica se escriba en Javascript estándar, la etiqueta de script **si
 
 1. **Prioridad de Props:** Antes de escribir una sola línea de CSS o clases utilitarias, se debe verificar si el componente de Vuetify ofrece una propiedad nativa para el efecto deseado (ej: usar `density="compact"` en lugar de reducir padding manualmente).
 2. **Iconografía:** Se utilizarán estrictamente los iconos provistos por defecto en la instalación de Vuetify (Material Design Icons). No se permite la importación de librerías de iconos externas sin una justificación de arquitectura aprobada.
+
+### 3.4. Nomenclatura y Enrutamiento
+
+1. **Archivos PascalCase:** Se utilizará estrictamente **PascalCase** para todos los archivos `.vue` en `src/pages/` y `src/components/`.
+    * *Correcto:* `SysCheck.vue`, `UserProfile.vue`
+2. **URLs Personalizadas (Override):** Si se requiere una URL en `kebab-case` distinta al nombre del archivo, **está prohibido renombrar el archivo**. Se debe utilizar el bloque de configuración explícita al final del componente:
+
+    ```yaml
+    <route lang="yaml">
+    path: /mi-ruta-personalizada
+    </route>
+    ```
 
 ## 4. Estándares de Integración
 

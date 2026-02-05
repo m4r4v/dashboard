@@ -2,21 +2,15 @@ services:
   frontend:
     container_name: dashboard-frontend
     image: m4r4v/frontend:latest
-    # Definimos el directorio de trabajo exacto donde vive el package.json
     working_dir: /workspace/app
     volumes:
-      # Mapeo crítico: Host (Repo) <-> Container (Runtime)
       - ./frontend/app:/workspace/app
-      # Exclusión: Evitamos que los node_modules del host (si existen) pisen los del contenedor
-      # O aseguramos que persistan en un volumen anónimo si se prefiere.
-      # Por ahora, usamos el mapeo directo para desarrollo simple.
     ports:
       - "3000:3000"
-    # Comando de inicio: Levanta el servidor Vite y expone a la red (0.0.0.0)
     command: pnpm dev --host
-    # Variables de entorno básicas para Node
     environment:
       - NODE_ENV=development
+      - VITE_API_URL=http://localhost:8000
 
   docs:
     container_name: dashboard-docs
@@ -29,3 +23,36 @@ services:
     command: pnpm dev
     environment:
       - NODE_ENV=development
+
+  backend:
+    container_name: dashboard-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+    ports:
+      - "8000:8000"
+    command: bash -c "poetry install --no-root && uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload"
+    environment:
+      - PYTHONPATH=/workspace
+      - FRONTEND_ORIGINS=http://localhost:3000
+      # NUEVO: Conexión a BD (usuario:password@host:puerto/nombre_bd)
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/dashboard_db
+    depends_on:
+      - db
+
+  # NUEVO SERVICIO DE BASE DE DATOS
+  db:
+    container_name: dashboard-db
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dashboard_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
