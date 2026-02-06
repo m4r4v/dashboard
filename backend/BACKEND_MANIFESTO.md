@@ -1,36 +1,40 @@
-# BACKEND MANIFESTO
->
-> **Ámbito:** API & Lógica de Negocio
-> **Versión:** 1.0.0
-> **Dependencias:** ROOT MANIFESTO
+# Backend Manifesto
 
-## 1. Definición del Stack Tecnológico
+> **Estado:** 🚧 En Construcción
+> **Stack:** FastAPI + SQLModel + AsyncPG
+> **Documentación Hija:** [API Rules](./API_MANIFESTO.md), [Database Rules](./DATABASE_MANIFESTO.md), [Auth Rules](./AUTH_MANIFESTO.md)
 
-1. **Lenguaje:** Python 3.11 (Slim Bookworm/Alpine).
-2. **Framework:** FastAPI (Última versión estable).
-3. **Gestor de Paquetes:** **Poetry** (Estricto).
-    * Uso prohibido de `pip install` manual.
-    * Archivo de verdad: `pyproject.toml`.
-4. **Calidad de Código:** **Ruff**.
-    * Debe actuar como Linter y Formatter (Zero Config).
+## 1. Arquitectura Modular
 
-## 2. Infraestructura y Entorno
+El backend se divide estrictamente en "Routers" aislados. Prohibido código monolítico en `main.py`.
 
-1. **Imagen Base:** `python:3.11-slim`.
-2. **Estructura de Directorios:**
-    * `backend/` (Raíz del servicio, contiene `pyproject.toml`).
-    * `backend/api/` (Código fuente Python).
-3. **Modelo de Persistencia (Docker):**
-    * **Host:** `./backend:/workspace` (Montaje de raíz para acceso a configs).
-    * **Working Dir:** `/workspace`.
-    * **Python Path:** Configurado para reconocer `api` como módulo.
+### Módulos Activos
 
-## 3. Protocolo de Inicialización
+* **[✅] Items:** Gestión de inventario (CRUD Completo).
+  * *Estado:* Operativo (`/api/v1/items`).
+  * *Dependencias:* `db.py`, `models.py`.
 
-1. **Application Factory:** Uso obligatorio de patrón Factory (`create_app`) en `api/main.py`.
-2. **Identidad:** El nombre del proyecto en configuraciones (OpenAPI/Swagger) será estrictamente **`dashboard-backend`**.
+* **[✅] Auth:** Sistema de Identidad Stateless (JWT).
+  * *Estado:* Operativo (`/api/v1/auth`).
+  * *Dependencias:* `security.py`, `routers/auth.py`.
+  * *Estrategia:* Zero Knowledge (Argon2 + Variables de Entorno) + Stateless Root.
 
-## 4. Estándares de Integración
+### Módulos Planificados
 
-1. **CORS:** Restringido explícitamente al origen del Frontend (según env var).
-2. **Documentación:** `/docs` (Swagger) habilitado en entorno DEV.
+* (Vacío por ahora - Próximos módulos se definirán aquí)
+
+## 2. Política de Seguridad (Nuevo)
+
+> **Regla de Oro:** "Zero Trust" para operaciones de escritura.
+
+1. **Público:** `GET` (Lectura) puede ser público (según caso de uso).
+2. **Privado:** `POST`, `PUT`, `DELETE` **SIEMPRE** requieren autenticación.
+3. **Token:** Se usará `Bearer Token` (JWT) con expiración corta.
+4. **Hashing:** Passwords nunca se guardan en texto plano (Usar `Argon2` obligatoriamente).
+
+## 3. Flujo de Desarrollo (Regla de Oro)
+
+1. Actualizar Manifesto.
+2. Definir Modelos (DTOs).
+3. Implementar Router.
+4. Registrar en `main.py`.

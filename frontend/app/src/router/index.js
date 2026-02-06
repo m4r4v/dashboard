@@ -14,6 +14,27 @@ const router = createRouter({
   routes: setupLayouts(routes),
 })
 
+// --- SECURITY GUARD (Middleware) ---
+router.beforeEach((to, from, next) => {
+  // Leemos el token directamente del almacenamiento (Fuente de Verdad)
+  const token = localStorage.getItem('token')
+  const isAuthenticated = !!token
+
+  // Lógica de Semáforo
+  if (to.path === '/login' && isAuthenticated) {
+    // REGLA 1 (Tu solicitud): Si ya estoy logueado, prohibido ver el Login.
+    // Redirigir al Dashboard.
+    next('/')
+  } else if (to.path !== '/login' && !isAuthenticated) {
+    // REGLA 2 (Seguridad): Si soy anónimo, prohibido ver el Dashboard.
+    // Redirigir al Login.
+    next('/login')
+  } else {
+    // Tráfico Legítimo
+    next()
+  }
+})
+
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {
   if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {

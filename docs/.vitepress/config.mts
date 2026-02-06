@@ -21,6 +21,11 @@ export default defineConfig({
         items: [
           { text: "Primeros Pasos", link: "/backend/getting-started" },
           { text: "Gobernanza", link: "/backend/governance" },
+          { text: "Base de Datos & Lifespan", link: "/backend/database" },
+          {
+            text: "Seguridad & Auth",
+            link: "/backend/auth",
+          } /* <--- NUEVO: Enlace registrado */,
         ],
       },
       {

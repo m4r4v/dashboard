@@ -26,7 +26,9 @@ WORKDIR /workspace
 # CAPA DE CACHÉ: Copiamos definición de dependencias antes del código
 COPY pyproject.toml poetry.lock ./
 
-# Instalación de dependencias del proyecto (sin el código fuente aún)
-RUN poetry install --no-root --no-interaction --no-ansi
+# Instalación de dependencias del proyecto
+# FIX CRÍTICO: Ejecutamos 'poetry lock' para sincronizar el lockfile con el toml
+# antes de instalar. Esto repara discrepancias causadas por ediciones manuales.
+RUN poetry lock --no-update && poetry install --no-root --no-interaction --no-ansi
 
 # Nota: El código fuente se montará vía volumen en docker-compose
