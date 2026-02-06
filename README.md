@@ -1,16 +1,12 @@
 # Dashboard Project
 
-> **Estado:** 🟢 Operativo (Hito 7 Completado)
+> **Estado:** 🟡 En Auditoría (Hito 8)
 > **Stack:** FastAPI + SQLModel + AsyncPG + Vue3
 > **Seguridad:** Zero Trust / Stateless Root (Argon2 + JWT)
 
 ## 📋 Resumen de Situación
 
-El proyecto opera bajo una arquitectura de microservicios estricta.
-
-- **Backend:** Expone una API RESTful con validación Pydantic y documentación automática.
-- **Seguridad:** Implementa autenticación OAuth2 (Form Data) con tokens JWT.
-- **Frontend:** SPA en Vue 3 con gestión de estado (Pinia) y enrutamiento protegido.
+El proyecto se encuentra en una fase de **Consolidación y Auditoría**. Se han detenido los desarrollos de nuevas funcionalidades para verificar la solidez de la arquitectura base (Microservicios, Auth, Estado).
 
 ## 🚀 Inicio Rápido
 
@@ -22,31 +18,41 @@ docker compose up -d
 
 ### 2. Verificar Servicios
 
-- **Frontend:** <http://localhost:3000> (Redirige a Login si no hay sesión)
+- **Frontend:** <http://localhost:3000> (Login requerido)
 - **API Docs:** <http://localhost:8000/docs>
 - **Health Check:** `curl http://localhost:8000/`
 
-## 📍 Mapa de Navegación
+## 📍 Gobernanza (Manifestos)
 
-- **[Frontend Governance](./frontend/FRONTEND_MANIFESTO.md):** Reglas de UI y Estado.
-- **[Backend & Auth](./docs/backend/auth.md):** Guía de seguridad.
-- **[Database](./docs/backend/database.md):** Modelos y conexión.
+Las reglas del juego son inmutables y deben auditarse constantemente.
+
+- **[Frontend Rules](./frontend/FRONTEND_MANIFESTO.md)**
+- **[Backend Rules](./docs/backend/backend_manifesto.md)** (Pendiente de mover)
+- **[Security Rules](./docs/backend/auth.md)**
 
 ## 📅 Hoja de Ruta (Roadmap)
 
-- [x] **Hito 0:** Configuración de Docker y Entorno.
-- [x] **Hito 1:** Integración Frontend-Backend.
-- [x] **Hito 2:** Inicialización del Backend (Factory Pattern).
-- [x] **Hito 3:** Base de Datos (SQLModel + AsyncPG).
-- [x] **Hito 4:** API Items (CRUD Completo).
-- [x] **Hito 5:** Seguridad y Auth (JWT + Argon2 + Middleware).
-- [x] **Hito 6:** Integración Frontend (Login + Router Guard).
-- [x] **Hito 7:** Interfaz de Inventario (Items).
-  - [x] **Paso 1:** Capa de Servicio.
-  - [x] **Paso 2:** Capa de Estado (Pinia).
-  - [x] **Paso 3:** UI Listado y CRUD (Items.vue).
-- [ ] **Hito 8:** Integración de Navegación (Menú Lateral).
+### Fase 1: Cimentación (Completada)
 
----
-*Para detener el entorno:*
-`docker compose down`
+* [x] **Hito 0:** Configuración de Docker y Entorno.
+- [x] **Hito 1:** Integración Frontend-Backend.
+- [x] **Hito 2:** Inicialización del Backend.
+- [x] **Hito 3:** Base de Datos y Modelos.
+- [x] **Hito 4:** API RESTful (Items).
+- [x] **Hito 5:** Seguridad (Auth Zero Trust).
+- [x] **Hito 6:** Integración UI (Login).
+- [x] **Hito 7:** UI Funcional (Inventario).
+
+### Fase 2: Consolidación (Actual)
+
+* [ ] **Hito 8:** Auditoría Técnica Integral.
+  - [ ] Performance & Resiliencia.
+  - [ ] Seguridad & Compliance.
+  - [ ] Arquitectura de Datos.
+- [ ] **Hito 9:** Documentación Maestra (VitePress).
+  - [ ] Actualización de guías.
+  - [ ] Referencia de API y Componentes.
+
+### Fase 3: Expansión (Futuro)
+
+* [ ] **Hito 10:** Diseño UI/UX y Dashboard (Dependencias).

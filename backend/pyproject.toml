@@ -17,8 +17,8 @@ alembic = "^1.13.1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 argon2-cffi = "^25.1.0"
 python-jose = {extras = ["cryptography"], version = "^3.5.0"}
-# CORRECCIÓN HITO 6: Versión flexible para evitar bloqueo SemVer 0.x
-python-multipart = "*"
+# FIX: Requerido para OAuth2 Form Data
+python-multipart = "^0.0.9"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.14"
