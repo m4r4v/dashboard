@@ -1,7 +1,7 @@
 # DASHBOARD: STATELESS ROOT & HYBRID PERSISTENCE
 
-> **Versión Arquitectura:** 1.2.0
-> **Estado:** Estable (Backend + Auth Integrados)
+> **Versión Arquitectura:** 1.3.0
+> **Estado:** Estable (UI Core Completo)
 
 Este proyecto es un Panel de Control autocontenido diseñado bajo la filosofía **Stateless Root**. Prioriza la seguridad criptográfica (Argon2id + Hex128) y utiliza un modelo de persistencia híbrida (SQLite Local / Postgres Cloud) para adaptarse a cualquier entorno sin cambios de código.
 
@@ -56,11 +56,23 @@ Este tablero rastrea el progreso del reinicio del sistema, yendo desde la config
 
 ### FASE 6: INTERFAZ DE USUARIO (CORE)
 
-*Objetivo: Implementar gestión de sesión y vistas protegidas.*
+*Objetivo: Implementar experiencia de usuario completa (UX/UI).*
 
-- [X] **6.1 Store Auth**: Implementación de Pinia para gestión de JWT.
-- [X] **6.2 Vista Login**: Formulario reactivo con componentes Vuetify.
-- [ ] **6.3 Interceptor Axios**: Inyección automática de tokens en peticiones.
+- [x] **6.1 Store Auth**: Implementación de Pinia para gestión de JWT. ✅
+- [x] **6.2 Vista Login**: Formulario reactivo con Honeypot anti-bots. ✅
+- [x] **6.3 Interceptor & Guard**: Protección de rutas y manejo de 401. ✅
+- [x] **6.4 Layout Premium**: App Bar, Navigation Drawer y Theme Switcher. ✅
+- [x] **6.5 Feedback System**: Store UI para Notificaciones (Snackbars) y Loading global. ✅
+- [x] **6.6 Dashboard Home**: Widgets de resumen y estructura base en Inglés. ✅
+
+### FASE 7: GESTIÓN DE USUARIOS (ADMIN)
+
+*Objetivo: Transformar el sistema en una plataforma multi-usuario real.*
+
+- [ ] **7.1 Modelo de Datos**: Definir tabla `users` en SQLAlchemy y script de migración.
+- [ ] **7.2 API CRUD**: Endpoints para Crear, Listar, Editar y Eliminar usuarios.
+- [ ] **7.3 Frontend User Store**: Lógica de Pinia para consumir la API de usuarios.
+- [ ] **7.4 Vista de Gestión**: Tabla de datos (`v-data-table`) con diálogos de edición.
 
 ---
 
