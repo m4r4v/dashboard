@@ -24,7 +24,8 @@ Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colabor
 
 ### FASE 1: ROOT & CONFIGURACIÓN (La Base)
 
-- [x] **1.1 `.gitignore`**: Definir exclusiones de seguridad y entorno. ✅
+* [x] **1.1 `.gitignore`**: Definir exclusiones de seguridad y entorno. ✅
+
 * [x] **1.2 `README.md`**: Tablero de control y documentación viva. ✅
 * [x] **1.3 `mkdocs.yml`**: Sistema de documentación. ✅
 * [x] **1.4 `docker-compose.yaml`**: Orquestador v1.1.0. ✅
@@ -32,12 +33,14 @@ Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colabor
 
 ### FASE 2: DOCUMENTACIÓN
 
-- [x] **2.1 Estructura `/docs`**: Arquitectura y Guías. ✅
+* [x] **2.1 Estructura `/docs`**: Arquitectura y Guías. ✅
+
 * [x] **2.2 `REQUIREMENTS.md`**: Especificación oficial. ✅
 
 ### FASE 3: BACKEND (El Cerebro)
 
-- [x] **3.1 Dependencias**: Poetry (FastAPI, Argon2, AsyncPG). ✅
+* [x] **3.1 Dependencias**: Poetry (FastAPI, Argon2, AsyncPG). ✅
+
 * [x] **3.2 Dockerfile**: Multi-Stage optimizado. ✅
 * [x] **3.3 Persistencia**: Lógica Híbrida (SQLite/Postgres). ✅
 * [x] **3.4 Entrypoint**: Main, CORS y Health Check. ✅
@@ -45,57 +48,55 @@ Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colabor
 
 ### FASE 4: FRONTEND (La Cara)
 
-- [x] **4.1 Estructura**: Vite + Vuetify + TypeScript. ✅
+* [x] **4.1 Estructura**: Vite + Vuetify + TypeScript. ✅
+
 * [x] **4.2 Build**: Verificación de compilación. ✅
 
 ### FASE 5: INTEGRACIÓN & DESPLIEGUE
 
-- [x] **5.1 Docker Build**: Levantamiento conjunto. ✅
+* [x] **5.1 Docker Build**: Levantamiento conjunto. ✅
+
 * [x] **5.2 Test DB**: Verificación de persistencia. ✅
 * [x] **5.3 Test Auth**: Login Root verificado. ✅
 
 ### FASE 6: INTERFAZ DE USUARIO (CORE)
 
-- [x] **6.1 Store Auth**: Pinia + JWT Persistence. ✅
+* [x] **6.1 Store Auth**: Pinia + JWT Persistence. ✅
+
 * [x] **6.2 Login View**: Honeypot + Feedback visual. ✅
 * [x] **6.3 Security Guards**: Axios Interceptors + Router Guards. ✅
 * [x] **6.4 Layout Premium**: App Bar, Drawer, Theme Switcher. ✅
 * [x] **6.5 Feedback System**: Global Snackbar & Loading Store. ✅
 * [x] **6.6 Dashboard Home**: Widgets de resumen y estructura EN. ✅
 
-### FASE 7: GESTIÓN DE USUARIOS (Fase Activa) 🚧
+### FASE 7: MOTOR DE WIDGETS "DATA-DRIVEN" 🚧
 
-*Objetivo: Transformar el sistema en una plataforma multi-usuario real.*
+*Objetivo: Implementar una arquitectura de Dashboard guiada por metadatos JSON.*
 
-* [ ] **7.1 Análisis**: Discusión de modelo de datos y endpoints.
-* [ ] **7.2 Backend DB**: Modelo SQLAlchemy `User` y Migración.
-* [ ] **7.3 API CRUD**: Endpoints (Create, Read, Update, Delete).
-* [ ] **7.4 Frontend Store**: Lógica Pinia para usuarios.
-* [ ] **7.5 UI Gestión**: Tabla de datos y formularios.
+* [X] **7.1 Backend Telemetry**: Endpoint `/api/system/metrics` (CPU/RAM) usando `psutil` para tener datos reales.
+* [ ] **7.2 Dashboard Store**: Implementar `useDashboardStore` con el esquema JSON avanzado (Layout, UI, Data).
+* [ ] **7.3 Moldes Maestros**: Crear `WidgetStat.vue` (KPIs numéricos) y `DashboardGrid.vue` (Orquestador).
+* [ ] **7.4 Integración**: Conectar Backend -> Store -> Grid -> Widget para ver los datos vivos.
+* [ ] **7.5 Prueba de Personalización**: Demostrar el cambio de tamaño/color modificando solo el JSON.
 
 ---
 
-## 🔮 Roadmap Futuro (2026+)
+## 🔮 Roadmap Futuro (Template Focus)
 
-### FASE 8: AUDITORÍA Y TRAZABILIDAD
+### FASE 8: UI KIT AVANZADO (Showcase)
 
-* **Objetivo:** Registro inmutable de acciones ("Quién hizo qué").
-* **Alcance:** Middleware de intercepción, Logs de seguridad, Vista de Auditoría.
+* **Objetivo:** Proveer ejemplos de visualización de datos complejos.
+* **Alcance:** Integración de ApexCharts, Tablas de servidor (`v-data-table-server`), Formularios complejos.
 
-### FASE 9: TELEMETRÍA Y VISUALIZACIÓN
+### FASE 9: PATRONES DE BACKEND (Utilities)
 
-* **Objetivo:** Datos reales en tiempo real.
-* **Alcance:** Librería de gráficas (ApexCharts/Chart.js), Endpoints de agregación (KPIs).
+* **Objetivo:** Herramientas listas para usar.
+* **Alcance:** Sistema de Tareas Background, Exportación PDF/Excel, Email Templates.
 
-### FASE 10: CONFIGURACIÓN DINÁMICA
+### FASE 10: HARDENING & PRODUCCIÓN
 
-* **Objetivo:** Controlar el negocio sin reiniciar Docker.
-* **Alcance:** Tabla `settings`, UI de configuración de variables del sistema.
-
-### FASE 11: HARDENING & PRODUCCIÓN
-
-* **Objetivo:** Salida al mundo real.
-* **Alcance:** Nginx Reverse Proxy (SSL), CI/CD Pipelines, Optimización Gzip/Cache.
+* **Objetivo:** Preparar la plantilla para despliegue real.
+* **Alcance:** CI/CD, Nginx, Optimizaciones de Build.
 
 ---
 

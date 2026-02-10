@@ -1,37 +1,43 @@
 <template>
-  <v-container class="fill-height" fluid>
+  <v-container class="fill-height bg-grey-lighten-4" fluid>
     <v-row align="center" justify="center">
       <v-col cols="12" lg="4" md="6" sm="8">
 
-        <v-card class="elevation-12 rounded-lg">
-          <v-toolbar color="primary" dark flat>
+        <v-card class="elevation-12 rounded-lg overflow-hidden" min-height="440">
+          <v-toolbar color="primary" flat>
             <v-toolbar-title class="text-uppercase font-weight-bold">
-              Control Room
+              Control Room <span class="text-caption ml-2">v1.3.0</span>
             </v-toolbar-title>
           </v-toolbar>
 
-          <v-card-text class="pa-6">
-            <div class="text-subtitle-1 mb-4 text-medium-emphasis">
-              Identifíquese para acceder al sistema raíz.
+          <v-card-text class="pa-8">
+            <div class="text-h6 mb-2 font-weight-bold">Login</div>
+            <div class="text-body-2 mb-6 text-medium-emphasis">
+              Identifíquese para gestionar el nodo stateless.
             </div>
 
-            <v-alert
-              v-if="errorMsg"
-              class="mb-4"
-              closable
-              type="error"
-              variant="tonal"
-              @click:close="errorMsg = null"
-            >
-              {{ errorMsg }}
-            </v-alert>
+            <div>
+              <v-fade-transition>
+                <v-alert
+                  v-if="errorMsg"
+                  class="mb-4"
+                  density="compact"
+                  type="error"
+                  variant="tonal"
+                >
+                  {{ errorMsg }}
+                </v-alert>
+              </v-fade-transition>
+            </div>
 
             <v-form ref="form" v-model="valid" @submit.prevent="handleLogin">
               <v-text-field
                 v-model="email"
-                autofocus
+                class="mb-4"
+                color="primary"
+                hide-details="auto"
                 label="Correo Electrónico"
-                prepend-inner-icon="mdi-email"
+                prepend-inner-icon="mdi-email-outline"
                 required
                 :rules="emailRules"
                 variant="outlined"
@@ -40,8 +46,11 @@
               <v-text-field
                 v-model="password"
                 :append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                class="mb-4"
+                color="primary"
+                hide-details="auto"
                 label="Contraseña"
-                prepend-inner-icon="mdi-lock"
+                prepend-inner-icon="mdi-lock-outline"
                 required
                 :rules="requiredRules"
                 :type="showPass ? 'text' : 'password'"
@@ -49,33 +58,27 @@
                 @click:append-inner="showPass = !showPass"
               />
 
-              <v-text-field
-                v-model="honeypot"
-                autocomplete="off"
-                class="d-none"
-                name="phone"
-                tabindex="-1"
-              />
+              <input v-model="honeypot" class="d-none" tabindex="-1">
 
               <v-btn
                 block
-                class="mt-4 font-weight-bold"
+                class="mt-6 font-weight-bold"
                 color="primary"
                 :disabled="!valid"
-                :loading="loading"
+                :loading="authStore.isLoading"
                 size="large"
                 type="submit"
+                variant="flat"
               >
-                Iniciar Sesión
+                Entrar al Sistema
               </v-btn>
             </v-form>
           </v-card-text>
         </v-card>
 
-        <div class="text-center mt-4 text-caption text-disabled">
-          &copy; {{ new Date().getFullYear() }} Dashboard System v1.2.0
+        <div class="text-center mt-6 text-caption text-disabled">
+          &copy; {{ new Date().getFullYear() }} Dashboard System • Stateless Mode
         </div>
-
       </v-col>
     </v-row>
   </v-container>
@@ -89,62 +92,28 @@
   const router = useRouter()
   const authStore = useAuthStore()
 
-  // --- Estado Local ---
   const valid = ref(false)
-  const loading = ref(false)
   const showPass = ref(false)
   const errorMsg = ref(null)
-
-  // Campos del formulario
   const email = ref('')
   const password = ref('')
-  const honeypot = ref('') // Campo trampa
+  const honeypot = ref('')
 
-  // --- Reglas de Validación ---
-  const requiredRules = [v => !!v || 'Este campo es requerido']
+  const requiredRules = [v => !!v || 'Requerido']
   const emailRules = [
-    v => !!v || 'El correo es requerido',
-    v => /.+@.+\..+/.test(v) || 'El formato del correo no es válido'
+    v => !!v || 'Requerido',
+    v => /.+@.+\..+/.test(v) || 'Formato inválido'
   ]
 
-  // --- Lógica de Negocio ---
   async function handleLogin () {
+    if (honeypot.value || !valid.value) return
     errorMsg.value = null
 
-    // 1. Verificación Honeypot (Cliente)
-    if (honeypot.value) {
-      console.warn('Bot detectado: Campo honeypot completado.')
-      loading.value = true
-      setTimeout(() => {
-        loading.value = false
-        errorMsg.value = 'Error de conexión.'
-      }, 1000)
-      return
-    }
-
-    // 2. Validación de Formulario
-    if (!valid.value) return
-
-    loading.value = true
-
     try {
-      // 3. Llamada al Store
       await authStore.login(email.value, password.value)
-
-      // 4. Redirección Éxitosa
       router.push('/')
-
-    } catch (error) {
-      // Manejo de errores HTTP
-      if (error.response?.status === 401) {
-        errorMsg.value = 'Credenciales incorrectas. Verifique y reintente.'
-      } else if (error.code === 'ERR_NETWORK') {
-        errorMsg.value = 'No hay conexión con el servidor.'
-      } else {
-        errorMsg.value = 'Error inesperado del sistema.'
-      }
-    } finally {
-      loading.value = false
+    } catch (error: any) {
+      errorMsg.value = error.response?.status === 401 ? 'Acceso denegado.' : 'Servidor no disponible.';
     }
   }
 </script>

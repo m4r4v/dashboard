@@ -3,7 +3,7 @@ from typing import Optional
 from jose import jwt
 from argon2.low_level import hash_secret_raw, Type
 import secrets
-from app.config import settings
+from app.core.config import settings
 
 # ==============================================================================
 # MÓDULO DE SEGURIDAD (RF-02, RF-03) - VERSIÓN DETERMINISTA
