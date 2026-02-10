@@ -7,89 +7,108 @@ Este proyecto es un Panel de Control autocontenido diseñado bajo la filosofía 
 
 ---
 
-## 📍 PLAN MAESTRO DE EJECUCIÓN (Macro a Micro)
+## 🧠 Protocolo de Desarrollo (Reglas Maestras)
 
-Este tablero rastrea el progreso del reinicio del sistema, yendo desde la configuración raíz hacia los componentes internos.
+Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colaborador (incluida la IA) debe seguir estas reglas estrictas:
+
+1. **Anclaje de Estado (State Recovery):**
+    * Ante cualquier vacío de contexto o reinicio de sesión, se debe declarar explícitamente: *"Basado en el README v1.3.0, nos quedamos en la Fase X, paso Y"*. Nunca asumir o improvisar el estado actual.
+
+2. **Aprobación Previa (Pre-Flight Check):**
+    * Antes de escribir una sola línea de código para una nueva Fase, se deben **discutir y aprobar** los objetivos, la lógica y el alcance de dicha fase.
+    * *No se implementa nada que no haya sido analizado primero.*
+
+---
+
+## 📍 PLAN MAESTRO DE EJECUCIÓN (Estado Actual)
 
 ### FASE 1: ROOT & CONFIGURACIÓN (La Base)
 
-*Objetivo: Establecer los archivos de configuración global y orquestación.*
+- [x] **1.1 `.gitignore`**: Definir exclusiones de seguridad y entorno. ✅
+* [x] **1.2 `README.md`**: Tablero de control y documentación viva. ✅
+* [x] **1.3 `mkdocs.yml`**: Sistema de documentación. ✅
+* [x] **1.4 `docker-compose.yaml`**: Orquestador v1.1.0. ✅
+* [x] **1.5 `.env`**: Secretos v1.2 (Hash + Pepper). ✅
 
-- [x] **1.1 `.gitignore`**: Definir exclusiones de seguridad y entorno (RNF-01). ✅
-- [x] **1.2 `README.md`**: Establecer el tablero de control y documentación inicial. ✅
-- [x] **1.3 `mkdocs.yml`**: Configuración del sistema de documentación viva. ✅
-- [x] **1.4 `docker-compose.yaml`**: Orquestador definitivo (v1.1.0) con servicios Backend, Frontend y Docs. ✅
-- [x] **1.5 `.env`**: Plantilla de secretos con lógica v1.2 (Hash + Pepper). ✅
+### FASE 2: DOCUMENTACIÓN
 
-### FASE 2: DOCUMENTACIÓN (La Verdad)
-
-*Objetivo: Formalizar la arquitectura antes de tocar código.*
-
-- [x] **2.1 Estructura `/docs`**: Crear carpetas `architecture` y `guides` y el `index.md`. ✅
-- [x] **2.2 `REQUIREMENTS.md`**: Congelar la especificación v1.1.0 oficial. ✅
+- [x] **2.1 Estructura `/docs`**: Arquitectura y Guías. ✅
+* [x] **2.2 `REQUIREMENTS.md`**: Especificación oficial. ✅
 
 ### FASE 3: BACKEND (El Cerebro)
 
-*Objetivo: Implementar la lógica híbrida y seguridad stateless.*
-
-- [x] **3.1 `pyproject.toml`**: Definir dependencias con Poetry (FastAPI, Argon2, AsyncPG/AioSQLite). ✅
-- [x] **3.2 `Dockerfile`**: Construcción Multi-Stage optimizada. ✅
-- [x] **3.3 `backend/app/config.py`**: Implementar lógica "Hybrid Persistence" (Selector DB). ✅
-- [x] **3.4 `backend/app/main.py`**: Entrypoint, CORS y Endpoint `/health`. ✅
-- [x] **3.5 Auth Core**: Implementar hashing Argon2id (Hex 128) y JWT (Firma con Pepper). ✅
+- [x] **3.1 Dependencias**: Poetry (FastAPI, Argon2, AsyncPG). ✅
+* [x] **3.2 Dockerfile**: Multi-Stage optimizado. ✅
+* [x] **3.3 Persistencia**: Lógica Híbrida (SQLite/Postgres). ✅
+* [x] **3.4 Entrypoint**: Main, CORS y Health Check. ✅
+* [x] **3.5 Auth Core**: Argon2id (Hex 128) + JWT. ✅
 
 ### FASE 4: FRONTEND (La Cara)
 
-*Objetivo: Preparar la interfaz gráfica.*
-
-- [x] **4.1 Limpieza**: Eliminar deuda técnica anterior. ✅
-- [x] **4.2 Estructura**: Validar `package.json` (pnpm) y configuración de Vite. ✅
-- [x] **4.3 Build & Smoke Test**: Verificar instalación de dependencias y arranque. ✅
+- [x] **4.1 Estructura**: Vite + Vuetify + TypeScript. ✅
+* [x] **4.2 Build**: Verificación de compilación. ✅
 
 ### FASE 5: INTEGRACIÓN & DESPLIEGUE
 
-*Objetivo: Verificar que todo funcione junto.*
-
-- [x] **5.1 Build Inicial**: `docker compose up --build`. ✅
-- [x] **5.2 Test de Persistencia**: Verificar creación de `dashboard.db`. ✅
-- [x] **5.3 Test de Seguridad**: Verificar login con `ROOT_SECRET` + `SYSTEM_PEPPER`. ✅
+- [x] **5.1 Docker Build**: Levantamiento conjunto. ✅
+* [x] **5.2 Test DB**: Verificación de persistencia. ✅
+* [x] **5.3 Test Auth**: Login Root verificado. ✅
 
 ### FASE 6: INTERFAZ DE USUARIO (CORE)
 
-*Objetivo: Implementar experiencia de usuario completa (UX/UI).*
+- [x] **6.1 Store Auth**: Pinia + JWT Persistence. ✅
+* [x] **6.2 Login View**: Honeypot + Feedback visual. ✅
+* [x] **6.3 Security Guards**: Axios Interceptors + Router Guards. ✅
+* [x] **6.4 Layout Premium**: App Bar, Drawer, Theme Switcher. ✅
+* [x] **6.5 Feedback System**: Global Snackbar & Loading Store. ✅
+* [x] **6.6 Dashboard Home**: Widgets de resumen y estructura EN. ✅
 
-- [x] **6.1 Store Auth**: Implementación de Pinia para gestión de JWT. ✅
-- [x] **6.2 Vista Login**: Formulario reactivo con Honeypot anti-bots. ✅
-- [x] **6.3 Interceptor & Guard**: Protección de rutas y manejo de 401. ✅
-- [x] **6.4 Layout Premium**: App Bar, Navigation Drawer y Theme Switcher. ✅
-- [x] **6.5 Feedback System**: Store UI para Notificaciones (Snackbars) y Loading global. ✅
-- [x] **6.6 Dashboard Home**: Widgets de resumen y estructura base en Inglés. ✅
-
-### FASE 7: GESTIÓN DE USUARIOS (ADMIN)
+### FASE 7: GESTIÓN DE USUARIOS (Fase Activa) 🚧
 
 *Objetivo: Transformar el sistema en una plataforma multi-usuario real.*
 
-- [ ] **7.1 Modelo de Datos**: Definir tabla `users` en SQLAlchemy y script de migración.
-- [ ] **7.2 API CRUD**: Endpoints para Crear, Listar, Editar y Eliminar usuarios.
-- [ ] **7.3 Frontend User Store**: Lógica de Pinia para consumir la API de usuarios.
-- [ ] **7.4 Vista de Gestión**: Tabla de datos (`v-data-table`) con diálogos de edición.
+* [ ] **7.1 Análisis**: Discusión de modelo de datos y endpoints.
+* [ ] **7.2 Backend DB**: Modelo SQLAlchemy `User` y Migración.
+* [ ] **7.3 API CRUD**: Endpoints (Create, Read, Update, Delete).
+* [ ] **7.4 Frontend Store**: Lógica Pinia para usuarios.
+* [ ] **7.5 UI Gestión**: Tabla de datos y formularios.
+
+---
+
+## 🔮 Roadmap Futuro (2026+)
+
+### FASE 8: AUDITORÍA Y TRAZABILIDAD
+
+* **Objetivo:** Registro inmutable de acciones ("Quién hizo qué").
+* **Alcance:** Middleware de intercepción, Logs de seguridad, Vista de Auditoría.
+
+### FASE 9: TELEMETRÍA Y VISUALIZACIÓN
+
+* **Objetivo:** Datos reales en tiempo real.
+* **Alcance:** Librería de gráficas (ApexCharts/Chart.js), Endpoints de agregación (KPIs).
+
+### FASE 10: CONFIGURACIÓN DINÁMICA
+
+* **Objetivo:** Controlar el negocio sin reiniciar Docker.
+* **Alcance:** Tabla `settings`, UI de configuración de variables del sistema.
+
+### FASE 11: HARDENING & PRODUCCIÓN
+
+* **Objetivo:** Salida al mundo real.
+* **Alcance:** Nginx Reverse Proxy (SSL), CI/CD Pipelines, Optimización Gzip/Cache.
 
 ---
 
 ## 🛠 Comandos Rápidos
 
-**Levantar entorno de desarrollo:**
+**Levantar entorno:**
 
 ```bash
 docker compose up
 ```
 
-**Generar credenciales Root (Docker-First):**
-*Requiere el contenedor backend corriendo.*
+**Generar credenciales Root:**
 
 ```bash
 cat generate_secret.py | docker compose exec -T backend python3
 ```
-
-**Ver documentación:**
-Acceder a `http://localhost:8080` una vez levantado el servicio.
