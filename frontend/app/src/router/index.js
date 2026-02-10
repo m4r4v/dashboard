@@ -1,57 +1,39 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
 import { setupLayouts } from 'virtual:generated-layouts'
-// Composables
-import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from 'vue-router/auto-routes'
+/**
+ * router/index.js
+ * Configuración Corregida (v1.2.0)
+ */
+import { createRouter, createWebHistory } from 'vue-router/auto'
+import { routes } from 'vue-router/auto-routes' // <--- 1. IMPORTAMOS LAS RUTAS MANUALMENTE
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // 2. LA CORRECCIÓN: Pasamos las rutas envueltas en layouts directamente
   routes: setupLayouts(routes),
 })
 
-// --- SECURITY GUARD (Middleware) ---
+// ========================================================
+// 🛡️ ROUTER GUARD (El Portero)
+// ========================================================
 router.beforeEach((to, from, next) => {
-  // Leemos el token directamente del almacenamiento (Fuente de Verdad)
-  const token = localStorage.getItem('token')
-  const isAuthenticated = !!token
+    // Leemos el token directo del disco
+    const token = localStorage.getItem('token')
 
-  // Lógica de Semáforo
-  if (to.path === '/login' && isAuthenticated) {
-    // REGLA 1 (Tu solicitud): Si ya estoy logueado, prohibido ver el Login.
-    // Redirigir al Dashboard.
-    next('/')
-  } else if (to.path !== '/login' && !isAuthenticated) {
-    // REGLA 2 (Seguridad): Si soy anónimo, prohibido ver el Dashboard.
-    // Redirigir al Login.
-    next('/login')
-  } else {
-    // Tráfico Legítimo
-    next()
-  }
-})
+    // Rutas públicas (Lista blanca)
+    const publicPages = ['/login']
+    const authRequired = !publicPages.includes(to.path)
 
-// Workaround for https://github.com/vitejs/vite/issues/11804
-router.onError((err, to) => {
-  if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
-    if (localStorage.getItem('vuetify:dynamic-reload')) {
-      console.error('Dynamic import error, reloading page did not fix it', err)
+    // Lógica de Semáforo
+    if (authRequired && !token) {
+        // 🛑 Intento de acceso a zona privada sin token -> Login
+        next('/login')
+    } else if (to.path === '/login' && token) {
+        // 🔄 Usuario logueado intentando ir a login -> Dashboard
+        next('/')
     } else {
-      console.log('Reloading page to fix dynamic import error')
-      localStorage.setItem('vuetify:dynamic-reload', 'true')
-      location.assign(to.fullPath)
+        // ✅ Acceso permitido
+        next()
     }
-  } else {
-    console.error(err)
-  }
-})
-
-router.isReady().then(() => {
-  localStorage.removeItem('vuetify:dynamic-reload')
 })
 
 export default router

@@ -4,12 +4,12 @@
       <v-img
         class="mb-4"
         height="150"
-        src="@/assets/ByteLab-logo.png"
+        src="@/assets/logo.png"
       />
 
       <div class="mb-8 text-center">
         <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
-        <h1 class="text-h2 my-0 font-weight-bold">Bytelab Dashboard</h1>
+        <h1 class="text-h2 my-0 font-weight-bold">Vuetify</h1>
       </div>
 
       <v-row>
@@ -60,7 +60,7 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
+<script setup>
   const links = [
     {
       href: 'https://vuetifyjs.com/',

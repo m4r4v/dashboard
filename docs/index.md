@@ -1,21 +1,15 @@
----
-layout: home
-hero:
-  name: "Dashboard Docs"
-  text: "Documentación Oficial del Proyecto"
-  tagline: Gobernanza, Arquitectura y Guías.
-  actions:
-    - theme: brand
-      text: Empezar
-      link: /infrastructure/
-features:
-  - title: Infraestructura
-    details: Orquestación Docker y despliegues.
-    link: /infrastructure/
-  - title: Backend
-    details: API FastAPI y modelos de datos.
-    link: /backend/
-  - title: Frontend
-    details: Componentes Vue3 y reglas de UX.
-    link: /frontend/
----
+# Dashboard Control Room
+
+Bienvenido al sistema de documentación viva del **Stateless Dashboard**.
+
+## Estado del Sistema
+
+- **Versión:** 1.1.0
+- **Arquitectura:** Stateless Root + Hybrid Persistence
+- **Estado:** En Desarrollo (Fase 2)
+
+## Navegación Rápida
+
+- [Especificación de Requerimientos](architecture/REQUIREMENTS.md)
+- [Guías de Uso](guides/index.md)
+- [Políticas de Seguridad](security/index.md)

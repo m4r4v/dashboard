@@ -1,35 +1,44 @@
 [tool.poetry]
 name = "dashboard-backend"
-version = "0.1.0"
-description = "API oficial del Dashboard"
-authors = ["m4r4v"]
+version = "1.1.0"
+description = "Stateless Root Dashboard Backend"
+authors = ["m4r4v <m4r4v.0x001@gmail.com>"]
 readme = "README.md"
-packages = [{include = "api"}]
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.128.0"
-uvicorn = {extras = ["standard"], version = "^0.40.0"}
-# NUEVAS DEPENDENCIAS HITO 3
-sqlmodel = "^0.0.16"
-asyncpg = "^0.29.0"
-alembic = "^1.13.1"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-argon2-cffi = "^25.1.0"
-python-jose = {extras = ["cryptography"], version = "^3.5.0"}
-# FIX: Requerido para OAuth2 Form Data
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+# Configuración y Variables de Entorno
+pydantic-settings = "^2.1.0"
+# Persistencia Híbrida (RF-06, RF-07)
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
+aiosqlite = "^0.19.0"  # Driver Local
+asyncpg = "^0.29.0"    # Driver Producción
+# Seguridad (RF-02, RF-03)
+argon2-cffi = "^23.1.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 python-multipart = "^0.0.9"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.14"
+pytest = "^8.0.0"
+httpx = "^0.26.0"      # Cliente HTTP para tests
+ruff = "^0.3.0"        # Linter & Formatter (Reemplaza a Black/Flake8)
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+# --- CONFIGURACIÓN RUFF (Modern Python Standards) ---
 [tool.ruff]
 line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I"]  # E: Pycodestyle, F: Pyflakes, I: Isort
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

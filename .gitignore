@@ -1,6 +1,61 @@
-# ----------------------------------------------------------------------
-# 1. SISTEMA & IDEs (Global)
-# ----------------------------------------------------------------------
+# ==============================================================================
+# DASHBOARD GITIGNORE - ARCHITECTURE V1.1.0
+# ==============================================================================
+
+# --- 1. SEGURIDAD & SECRETOS (RNF-01: PRIORIDAD MÁXIMA) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# --- 2. PERSISTENCIA HÍBRIDA (RF-06: CRÍTICO) ---
+# Ignorar bases de datos locales generadas por aiosqlite
+*.db
+*.sqlite
+*.sqlite3
+backend/dashboard.db
+backend/dashboard.db-shm
+backend/dashboard.db-wal
+
+# --- 3. BACKEND (PYTHON / POETRY) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+# Distribución y librerías
+dist/
+build/
+*.egg-info/
+.installed.cfg
+*.egg
+# NOTA: poetry.lock SÍ se sube (RNF-04)
+
+# --- 4. FRONTEND (VUE / PNPM / VITE) ---
+node_modules/
+**/node_modules/
+.pnpm-store/
+dist/
+dist-ssr/
+coverage/
+.output/
+# Logs de NPM/Yarn/Pnpm
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+# NOTA: pnpm-lock.yaml SÍ se sube (RNF-04)
+
+# --- 5. DOCUMENTACIÓN (MKDOCS) ---
+site/
+docs/guides/scripts/auth_generator/
+
+# --- 6. IDEs & SISTEMA OPERATIVO ---
 .DS_Store
 Thumbs.db
 .vscode/
@@ -8,70 +63,14 @@ Thumbs.db
 *.swp
 *.swo
 
-# ----------------------------------------------------------------------
-# 2. PYTHON (Backend)
-# ----------------------------------------------------------------------
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-.pytest_cache/
-.coverage
-htmlcov/
-
-# ----------------------------------------------------------------------
-# 3. NODE & JAVASCRIPT (Frontend & Docs)
-# ----------------------------------------------------------------------
-node_modules/
-# Asegura ignorar node_modules en cualquier nivel de profundidad
-**/node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-# Exclusión crítica detectada en imagen
-.pnpm-store/
-frontend/.pnpm-store/
-dist/
-dist-ssr/
-coverage/
-
-# ----------------------------------------------------------------------
-# 4. VARIABLES DE ENTORNO (Seguridad Crítica)
-# ----------------------------------------------------------------------
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*.env
-
-# ----------------------------------------------------------------------
-# 5. DOCKER & LOGS
-# ----------------------------------------------------------------------
-docker-compose.override.yml
+# --- 7. INFRAESTRUCTURA & LOGS (DOCKER / TERRAFORM) ---
+.docker/
 *.log
-
-# ----------------------------------------------------------------------
-# 6. TERRAFORM (Infraestructura)
-# ----------------------------------------------------------------------
+docker-compose.override.yml
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# --- 8. LEGADO & TEMPORALES ---
+old/
+temp/

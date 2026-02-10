@@ -1,74 +1,64 @@
-name: dashboard
+version: '3.8'
 
+# ==============================================================================
+# ORQUESTADOR V1.1.0 - STATELESS ROOT & HYBRID PERSISTENCE
+# ==============================================================================
 services:
-  db:
-    container_name: dashboard-db
-    image: postgres:16-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dashboard_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./database/data:/var/lib/postgresql/data
-    networks:
-      - default
-
+  
+  # --- 1. BACKEND (Python FastAPI) ---
   backend:
     container_name: dashboard-backend
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    command: bash -c "poetry install --no-root && uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload"
+      context: ./backend          # Contexto de construcción
+      dockerfile: Dockerfile      # Dockerfile Multi-Stage
+    # Comando Híbrido: Instala dependencias en dev y levanta con Hot-Reload
+    command: bash -c "poetry install --no-root && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
-      - ./backend:/workspace
-      - ./.env:/workspace/.env
+      - ./backend:/workspace      # Espejo de código (RF-06: Persistencia SQLite aquí)
+      - ./.env:/workspace/.env    # Inyección de Secretos (RNF-01)
     ports:
       - "8000:8000"
-    depends_on:
-      db:
-        condition: service_started
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/dashboard_db
-      FRONTEND_ORIGINS: http://localhost:3000
       PYTHONPATH: /workspace
-      # --- Variables de Seguridad Mapeadas desde .env ---
-      AUTH_SECRET: ${AUTH_SECRET}
-      ROOT_AUTH_HASH: ${ROOT_AUTH_HASH}
+      # Variables de Seguridad Actualizadas
+      ROOT_SECRET: ${ROOT_SECRET}
+      SYSTEM_PEPPER: ${SYSTEM_PEPPER}  # <--- Nueva variable requerida
+      # JWT_SECRET: Eliminado (Se deriva dinámicamente)
+      DATABASE_URL: ${DATABASE_URL:-}
     networks:
-      - default
+      - dashboard-net
 
+  # --- 2. FRONTEND (Vue 3 + Vite) ---
   frontend:
     container_name: dashboard-frontend
-    image: m4r4v/frontend:latest
+    image: m4r4v/frontend:latest  # Imagen base (RNF-04)
+    # Vite necesita exponerse al host (0.0.0.0) para que lo veas en localhost:3000
     command: pnpm dev --host
     volumes:
-      - ./frontend/app:/workspace/app
+      - ./frontend/app:/workspace/app # Espejo de código (HMR)
     working_dir: /workspace/app
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: development
+      # RF-10: Configuración para CORS y llamadas API
       VITE_API_URL: http://localhost:8000
     networks:
-      - default
+      - dashboard-net
 
+  # --- 3. DOCUMENTACIÓN (MkDocs) ---
   docs:
     container_name: dashboard-docs
-    image: m4r4v/frontend:latest
-    command: pnpm dev
-    volumes:
-      - ./docs:/workspace
-    working_dir: /workspace
+    image: squidfunk/mkdocs-material:latest
     ports:
-      - "5173:5173"
-    environment:
-      NODE_ENV: development
+      - "8080:8000"
+    volumes:
+      - ./:/docs                  # Lee mkdocs.yml de la raíz
     networks:
-      - default
+      - dashboard-net
 
+# ==============================================================================
+# REDES
+# ==============================================================================
 networks:
-  default:
-    name: dashboard_default
+  dashboard-net:
+    driver: bridge

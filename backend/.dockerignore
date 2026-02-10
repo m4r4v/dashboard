@@ -1,0 +1,20 @@
+# Ignorar basura de Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignorar configuración local y secretos
+.env
+.env.local
+.git
+.gitignore
+Dockerfile
+docker-compose.yaml
+README.md

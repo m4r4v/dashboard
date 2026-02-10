@@ -1,0 +1,62 @@
+# ==============================================================================
+# DASHBOARD DOCUMENTATION CONFIG (RF-09)
+# ==============================================================================
+site_name: Dashboard Control Room
+site_description: Arquitectura Stateless Root & Hybrid Persistence
+site_author: m4r4v
+repo_name: m4r4v/dashboard
+repo_url: https://github.com/m4r4v/dashboard
+
+# --- TEMA & APARIENCIA (Material Design) ---
+theme:
+  name: material
+  language: es
+  palette:
+    # Modo Claro (Default)
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    # Modo Oscuro
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
+  features:
+    - navigation.tabs          # Pestañas superiores tipo "App"
+    - navigation.sections      # Secciones colapsables en sidebar
+    - navigation.top           # Botón "volver arriba"
+    - content.code.copy        # Botón de copiar en bloques de código
+    - content.tooltips         # Tooltips informativos
+
+# --- EXTENSIONES MARKDOWN ---
+markdown_extensions:
+  - admonition                 # Bloques de notas/advertencias
+  - pymdownx.details           # Bloques colapsables
+  - pymdownx.superfences       # Bloques de código avanzados
+  - pymdownx.highlight:        # Resaltado de sintaxis
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tasklist:         # Checkboxes (usado en tu Plan Maestro)
+      custom_checkbox: true
+  - attr_list                  # Atributos extra en elementos HTML
+
+# --- ESTRUCTURA DE NAVEGACIÓN ---
+nav:
+  - Inicio: index.md
+  - Arquitectura:
+      - 'Requerimientos (V1.1.0)': architecture/REQUIREMENTS.md
+      - 'Comportamiento IA': ai/BEHAVIOR.md
+      - 'Contexto Técnico': ai/TECHNICAL_CTX.md
+  - Guías:
+      - 'Scripts': guides/scripts/
+  - Seguridad:
+      - 'Políticas': security/
+
+# --- CONFIGURACIÓN DE RUTAS ---
+docs_dir: docs                 # La carpeta fuente es ./docs
+site_dir: site                 # La compilación va a ./site (ignorado en git)
