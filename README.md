@@ -1,115 +1,80 @@
 # DASHBOARD: STATELESS ROOT & HYBRID PERSISTENCE
 
 > **Versión Arquitectura:** 1.3.0
-> **Estado:** Estable (UI Core Completo)
+> **Estado:** Estable (Core & Security Hardened)
 
-Este proyecto es un Panel de Control autocontenido diseñado bajo la filosofía **Stateless Root**. Prioriza la seguridad criptográfica (Argon2id + Hex128) y utiliza un modelo de persistencia híbrida (SQLite Local / Postgres Cloud) para adaptarse a cualquier entorno sin cambios de código.
+Este proyecto es un Panel de Control autocontenido diseñado bajo la filosofía **Stateless Root**. Prioriza la seguridad criptográfica (Argon2id + Hex128) y la estabilidad visual mediante una arquitectura de componentes modulares y una política de consola limpia.
 
 ---
 
 ## 🧠 Protocolo de Desarrollo (Reglas Maestras)
 
-Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colaborador (incluida la IA) debe seguir estas reglas estrictas:
+Para garantizar la estabilidad del proyecto y evitar alucinaciones, todo colaborador debe seguir estas reglas estrictas:
 
 1. **Anclaje de Estado (State Recovery):**
-    * Ante cualquier vacío de contexto o reinicio de sesión, se debe declarar explícitamente: *"Basado en el README v1.3.0, nos quedamos en la Fase X, paso Y"*. Nunca asumir o improvisar el estado actual.
+    * Ante cualquier vacío de contexto, declarar: *"Basado en el README v1.3.0, nos quedamos en la Fase X, paso Y"*.
 
-2. **Aprobación Previa (Pre-Flight Check):**
-    * Antes de escribir una sola línea de código para una nueva Fase, se deben **discutir y aprobar** los objetivos, la lógica y el alcance de dicha fase.
-    * *No se implementa nada que no haya sido analizado primero.*
+2. **Quiet Console Policy (Consola Silenciosa):**
+    * Está estrictamente prohibido dejar `console.log` o `console.error` en producción.
+    * Los errores de red se gestionan mediante interceptores silenciosos que resuelven promesas para evitar rastro de "stack traces" en el navegador.
+
+3. **Zero Layout Shift (Anti-Rebote):**
+    * Todo componente que dependa de datos asíncronos debe tener un contenedor con `min-height` o altura fija.
+    * La UI no debe desplazarse verticalmente durante las fases de carga o error.
 
 ---
 
-## 📍 PLAN MAESTRO DE EJECUCIÓN (Estado Actual)
+## 🛡️ ESPECIFICACIONES TÉCNICAS (Blindaje v1.3.0)
 
-### FASE 1: ROOT & CONFIGURACIÓN (La Base)
+### 1. Autenticación Stateless Root
 
-* [x] **1.1 `.gitignore`**: Definir exclusiones de seguridad y entorno. ✅
+* **Hashing**: Implementación de **Argon2id** con un Salt determinista derivado del `SYSTEM_PEPPER`.
+* **Validación**: Comparación de tiempo constante (`secrets.compare_digest`) para mitigar ataques de canal lateral.
+* **Sesión**: Emisión de **JWT** firmado con una clave dinámica (`ROOT_SECRET` + `SYSTEM_PEPPER`).
 
-* [x] **1.2 `README.md`**: Tablero de control y documentación viva. ✅
-* [x] **1.3 `mkdocs.yml`**: Sistema de documentación. ✅
-* [x] **1.4 `docker-compose.yaml`**: Orquestador v1.1.0. ✅
-* [x] **1.5 `.env`**: Secretos v1.2 (Hash + Pepper). ✅
+### 2. Sistema de Feedback & Heartbeat
 
-### FASE 2: DOCUMENTACIÓN
+* **Heartbeat**: Ciclo de sincronización automática cada 30 segundos gestionado en el Layout global.
+* **Quiet Axios**: Interceptores configurados para capturar errores 401 y fallos de red, notificando vía UI (Snackbar/LED) sin ensuciar la consola de desarrollo.
+* **Modular Display**: Componente `SystemStatusDisplay.vue` autónomo que consume su propio store y gestiona su estado visual.
 
-* [x] **2.1 Estructura `/docs`**: Arquitectura y Guías. ✅
+---
 
-* [x] **2.2 `REQUIREMENTS.md`**: Especificación oficial. ✅
+## 📍 PLAN MAESTRO DE EJECUCIÓN
 
-### FASE 3: BACKEND (El Cerebro)
+### FASE 6: INTERFAZ DE USUARIO (CORE) - COMPLETADA ✅
 
-* [x] **3.1 Dependencias**: Poetry (FastAPI, Argon2, AsyncPG). ✅
-
-* [x] **3.2 Dockerfile**: Multi-Stage optimizado. ✅
-* [x] **3.3 Persistencia**: Lógica Híbrida (SQLite/Postgres). ✅
-* [x] **3.4 Entrypoint**: Main, CORS y Health Check. ✅
-* [x] **3.5 Auth Core**: Argon2id (Hex 128) + JWT. ✅
-
-### FASE 4: FRONTEND (La Cara)
-
-* [x] **4.1 Estructura**: Vite + Vuetify + TypeScript. ✅
-
-* [x] **4.2 Build**: Verificación de compilación. ✅
-
-### FASE 5: INTEGRACIÓN & DESPLIEGUE
-
-* [x] **5.1 Docker Build**: Levantamiento conjunto. ✅
-
-* [x] **5.2 Test DB**: Verificación de persistencia. ✅
-* [x] **5.3 Test Auth**: Login Root verificado. ✅
-
-### FASE 6: INTERFAZ DE USUARIO (CORE)
-
-* [x] **6.1 Store Auth**: Pinia + JWT Persistence. ✅
-
-* [x] **6.2 Login View**: Honeypot + Feedback visual. ✅
-* [x] **6.3 Security Guards**: Axios Interceptors + Router Guards. ✅
-* [x] **6.4 Layout Premium**: App Bar, Drawer, Theme Switcher. ✅
-* [x] **6.5 Feedback System**: Global Snackbar & Loading Store. ✅
-* [x] **6.6 Dashboard Home**: Widgets de resumen y estructura EN. ✅
+* [x] **6.1 Store Auth**: Pinia + JWT Persistence (ESLint Clean). ✅
+* [x] **6.2 Login View**: Anti-Rebote + Honeypot + Feedback tonal. ✅
+* [x] **6.3 Security Guards**: Axios Interceptors (Silent Mode) + Router Guards. ✅
+* [x] **6.4 Layout Premium**: App Bar con progreso absoluto, LED status y Heartbeat. ✅
+* [x] **6.5 Feedback System**: Global Snackbar & UI Loading Store. ✅
+* [x] **6.6 Dashboard Home**: Integración de `SystemStatusDisplay` modular. ✅
 
 ### FASE 7: MOTOR DE WIDGETS "DATA-DRIVEN" 🚧
 
 *Objetivo: Implementar una arquitectura de Dashboard guiada por metadatos JSON.*
 
-* [X] **7.1 Backend Telemetry**: Endpoint `/api/system/metrics` (CPU/RAM) usando `psutil` para tener datos reales.
-* [ ] **7.2 Dashboard Store**: Implementar `useDashboardStore` con el esquema JSON avanzado (Layout, UI, Data).
-* [ ] **7.3 Moldes Maestros**: Crear `WidgetStat.vue` (KPIs numéricos) y `DashboardGrid.vue` (Orquestador).
-* [ ] **7.4 Integración**: Conectar Backend -> Store -> Grid -> Widget para ver los datos vivos.
-* [ ] **7.5 Prueba de Personalización**: Demostrar el cambio de tamaño/color modificando solo el JSON.
-
----
-
-## 🔮 Roadmap Futuro (Template Focus)
-
-### FASE 8: UI KIT AVANZADO (Showcase)
-
-* **Objetivo:** Proveer ejemplos de visualización de datos complejos.
-* **Alcance:** Integración de ApexCharts, Tablas de servidor (`v-data-table-server`), Formularios complejos.
-
-### FASE 9: PATRONES DE BACKEND (Utilities)
-
-* **Objetivo:** Herramientas listas para usar.
-* **Alcance:** Sistema de Tareas Background, Exportación PDF/Excel, Email Templates.
-
-### FASE 10: HARDENING & PRODUCCIÓN
-
-* **Objetivo:** Preparar la plantilla para despliegue real.
-* **Alcance:** CI/CD, Nginx, Optimizaciones de Build.
+* [x] **7.1 Backend Telemetry**: Endpoint `/api/system/status` verificado. ✅
+* [x] **7.2 Dashboard Store**: Implementar `systemStore` con reactividad completa. ✅
+* [x] **7.3 Moldes Maestros**: Crear `SystemStatusDisplay.vue` como componente autónomo. ✅
+* [ ] **7.4 Widgets Avanzados**: Implementar `WidgetStat.vue` para métricas CPU/RAM.
+* [ ] **7.5 Orquestador de Grid**: Crear `DashboardGrid.vue` basado en configuración JSON.
 
 ---
 
 ## 🛠 Comandos Rápidos
 
+**Limpieza de archivos huérfanos:**
+
+```bash
+rm frontend/app/src/components/HelloWorld.vue
+rm frontend/app/src/stores/app.js
+rm -rf frontend/app/src/components/widgets
+```
+
 **Levantar entorno:**
 
 ```bash
 docker compose up
-```
-
-**Generar credenciales Root:**
-
-```bash
-cat generate_secret.py | docker compose exec -T backend python3
 ```

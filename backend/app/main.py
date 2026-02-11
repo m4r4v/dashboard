@@ -1,48 +1,62 @@
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
-
 from app.core.config import settings
-from app.api.routes import auth, system
+from app.api.routes import auth, system, node
+
+logger = logging.getLogger("app")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Ciclo de vida del motor de base de datos."""
-    engine = create_async_engine(settings.final_database_url)
+    # Métricas atómicas en RAM
+    app.state.http_errors_4xx = 0
+    app.state.http_errors_5xx = 0
+
+    app.state.engine = create_async_engine(settings.final_database_url)
     try:
-        async with engine.begin() as conn:
+        async with app.state.engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
-    finally:
-        await engine.dispose()
+        logger.info(f"NODE_ONLINE: {settings.node_id}")
+    except Exception as e:
+        logger.error(f"NODE_DEGRADED: {e}")
+
     yield
+    await app.state.engine.dispose()
 
 
-app = FastAPI(
-    title="Dashboard Backend", version="1.3.0", lifespan=lifespan, docs_url="/api/docs"
-)
+app = FastAPI(title="Stateless Dashboard", version="1.4.0", lifespan=lifespan)
 
-# CORS Configurado para comunicación local/docker
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://0.0.0.0:3000",
-    ],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    max_age=600,
 )
 
-# Rutas estandarizadas
-app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
-app.include_router(system.router, prefix="/api/system", tags=["System"])
+
+@app.middleware("http")
+async def audit_middleware(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+
+    if not any(x in path for x in ["/logs", "/metrics"]) and request.method != "OPTIONS":
+        # Esta línea ahora sí entrará al búfer de node.py
+        logger.info(f"AUDIT: {request.method} {path} -> {response.status_code}")
+        
+        if 400 <= response.status_code < 500:
+            request.app.state.http_errors_4xx += 1
+        elif response.status_code >= 500:
+            request.app.state.http_errors_5xx += 1
+
+    return response
 
 
-@app.get("/health")
-async def health():
-    """Infra-check (Docker/K8s)"""
-    return {"status": "active"}
+app.include_router(auth.router, prefix="/api/auth")
+app.include_router(system.router, prefix="/api/system")
+app.include_router(node.router, prefix="/api/node")
