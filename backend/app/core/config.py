@@ -1,10 +1,8 @@
-import os
 import sys
 import socket
 from typing import Optional
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator, ValidationInfo
-
 
 class Settings(BaseSettings):
     # --- 1. SEGURIDAD ---
@@ -13,9 +11,9 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    # --- 2. IDENTIDAD Y LOGS (Ruta A + B) ---
+    # --- 2. IDENTIDAD Y LOGS ---
     node_id: str = socket.gethostname()
-    log_buffer_size: int = 20  # Búfer compacto para auditoría atómica
+    log_buffer_size: int = 20
 
     # --- 3. PERSISTENCIA HÍBRIDA ---
     database_url: Optional[str] = None
@@ -38,9 +36,7 @@ class Settings(BaseSettings):
             return self.database_url
         return "sqlite+aiosqlite:///./dashboard.db"
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
-
+    # Docker inyecta las variables en el OS, Pydantic las toma automáticamente
+    model_config = SettingsConfigDict(extra="ignore")
 
 settings = Settings()
