@@ -7,7 +7,7 @@ Este sistema es una infraestructura de control diseñada bajo la filosofía **St
 
 ---
 
-## 🧠 Protocolo de Desarrollo (Reglas Maestras)
+## Protocolo de Desarrollo (Reglas Maestras)
 
 1. **Anclaje de Estado (State Recovery):**
     * Ante cualquier reinicio de contexto, declarar: *"Basado en el README v1.4.0, el sistema está certificado hasta la Fase 8 y listo para iniciar la Fase 9"*.
@@ -20,7 +20,7 @@ Este sistema es una infraestructura de control diseñada bajo la filosofía **St
 
 ---
 
-## 🛡️ ESPECIFICACIONES TÉCNICAS (Blindaje v1.4.0)
+## ESPECIFICACIONES TÉCNICAS (Blindaje v1.4.0)
 
 ### 1. Seguridad Criptográfica (Stateless Root)
 
@@ -34,7 +34,7 @@ Este sistema es una infraestructura de control diseñada bajo la filosofía **St
 
 ---
 
-## 📍 PLAN MAESTRO DE EJECUCIÓN DETALLADO
+## PLAN MAESTRO DE EJECUCIÓN DETALLADO
 
 ### FASE 1: Cimentación & Core Asíncrono ✅
 
