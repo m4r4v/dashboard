@@ -12,7 +12,7 @@
 
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title class="text-uppercase font-weight-bold text-caption d-none d-sm-flex">
-        Control Room <span class="text-primary ml-1">v1.3.0</span>
+         Dasboard Infraestructura
       </v-app-bar-title>
 
       <v-spacer />
