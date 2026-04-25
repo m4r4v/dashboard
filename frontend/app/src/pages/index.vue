@@ -1,88 +1,65 @@
 <template>
-  <v-container class="pa-6" fluid>
-    <div class="d-flex align-center justify-space-between mb-6">
-      <div>
-        <h1 class="text-h4 font-weight-bold text-primary">Welcome, Root</h1>
-        <div class="text-subtitle-1 text-medium-emphasis">System status summary</div>
-      </div>
-      <v-btn color="primary" prepend-icon="mdi-refresh" variant="flat">Refresh</v-btn>
-    </div>
+  <v-container v-if="authStore.isAuthenticated" class="pa-6" fluid>
+
+    <v-row align="center" class="mb-6">
+      <v-col>
+        <h1 class="text-h4 font-weight-bold text-primary">System Dashboard</h1>
+        <div class="text-subtitle-1 text-medium-emphasis">
+          Nodo: <span class="text-info font-weight-bold">{{ node_id }}</span>
+        </div>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn
+          color="error"
+          prepend-icon="mdi-logout"
+          variant="tonal"
+          @click="authStore.logout"
+        >
+          Cerrar Sesión
+        </v-btn>
+      </v-col>
+    </v-row>
 
     <v-row>
-      <v-col cols="12" md="3" sm="6">
-        <v-card class="rounded-lg" elevation="2">
-          <v-card-text class="d-flex align-center">
-            <v-avatar class="mr-4" color="success" size="48" variant="tonal">
-              <v-icon icon="mdi-server-network" size="24" />
-            </v-avatar>
-            <div>
-              <div class="text-caption text-medium-emphasis text-uppercase font-weight-bold">Server Status</div>
-              <div class="text-h6 font-weight-bold">Online</div>
-            </div>
-          </v-card-text>
-        </v-card>
+      <v-col cols="12" :md="authStore.isRoot ? 6 : 12">
+        <SystemStatusDisplay />
       </v-col>
 
-      <v-col cols="12" md="3" sm="6">
-        <v-card class="rounded-lg" elevation="2">
-          <v-card-text class="d-flex align-center">
-            <v-avatar class="mr-4" color="primary" size="48" variant="tonal">
-              <v-icon icon="mdi-account-group" size="24" />
-            </v-avatar>
-            <div>
-              <div class="text-caption text-medium-emphasis text-uppercase font-weight-bold">Active Users</div>
-              <div class="text-h6 font-weight-bold">1 (Root)</div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3" sm="6">
-        <v-card class="rounded-lg" elevation="2">
-          <v-card-text class="d-flex align-center">
-            <v-avatar class="mr-4" color="warning" size="48" variant="tonal">
-              <v-icon icon="mdi-shield-check" size="24" />
-            </v-avatar>
-            <div>
-              <div class="text-caption text-medium-emphasis text-uppercase font-weight-bold">Security Level</div>
-              <div class="text-h6 font-weight-bold">Argon2id</div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3" sm="6">
-        <v-card class="rounded-lg" elevation="2">
-          <v-card-text class="d-flex align-center">
-            <v-avatar class="mr-4" color="info" size="48" variant="tonal">
-              <v-icon icon="mdi-tag-text" size="24" />
-            </v-avatar>
-            <div>
-              <div class="text-caption text-medium-emphasis text-uppercase font-weight-bold">Core Version</div>
-              <div class="text-h6 font-weight-bold">v1.2.0</div>
-            </div>
-          </v-card-text>
-        </v-card>
+      <v-col v-if="authStore.isRoot" cols="12" md="6">
+        <NodeControlPanel />
       </v-col>
     </v-row>
+  </v-container>
 
-    <v-row class="mt-4">
-      <v-col cols="12">
-        <v-card class="rounded-lg" elevation="2" subtitle="Latest system events" title="Recent Activity">
-          <v-card-text class="h-100 d-flex align-center justify-center pa-10 text-medium-emphasis">
-            <div class="text-center">
-              <v-icon class="mb-2 opacity-50" icon="mdi-chart-timeline-variant" size="64" />
-              <div>Waiting for telemetry data...</div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-
+  <v-container v-else class="fill-height d-flex align-center justify-center">
+    <v-progress-circular color="primary" indeterminate size="64" />
   </v-container>
 </template>
 
-<route lang="yaml">
-meta:
-  layout: default
-</route>
+<script setup lang="ts">
+  import { computed, onMounted, watchEffect } from 'vue'
+  import { useRouter } from 'vue-router'
+  import NodeControlPanel from '@/components/NodeControlPanel.vue'
+  import SystemStatusDisplay from '@/components/SystemStatusDisplay.vue'
+  import { useAuthStore } from '@/stores/authStore'
+  import { useSystemStore } from '@/stores/systemStore'
+
+  const authStore = useAuthStore()
+  const systemStore = useSystemStore()
+  const router = useRouter()
+
+  const node_id = computed(() => systemStore.status?.node_id || 'Cargando...')
+
+  // Seguridad Reactiva: Si el estado cambia a "no autenticado", fuera de aquí.
+  watchEffect(() => {
+    if (!authStore.isAuthenticated) {
+      router.push('/login')
+    }
+  })
+
+  onMounted(async () => {
+    if (authStore.isAuthenticated) {
+      await systemStore.fetchStatus()
+    }
+  })
+</script>

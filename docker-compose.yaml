@@ -1,5 +1,3 @@
-version: '3.8'
-
 # ==============================================================================
 # ORQUESTADOR V1.1.0 - STATELESS ROOT & HYBRID PERSISTENCE
 # ==============================================================================
@@ -33,7 +31,10 @@ services:
     container_name: dashboard-frontend
     image: m4r4v/frontend:latest  # Imagen base (RNF-04)
     # Vite necesita exponerse al host (0.0.0.0) para que lo veas en localhost:3000
-    command: pnpm dev --host
+    command: sh -c "pnpm config set strict-ssl false && 
+         pnpm config set node-linker hoisted && 
+         pnpm install --registry=https://registry.npmmirror.com && 
+         pnpm dev --host 0.0.0.0"
     volumes:
       - ./frontend/app:/workspace/app # Espejo de código (HMR)
     working_dir: /workspace/app

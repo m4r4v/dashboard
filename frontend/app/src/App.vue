@@ -1,20 +1,6 @@
 <template>
   <v-app>
     <router-view />
-
-    <v-snackbar
-      v-model="uiStore.snackbar.show"
-      :color="uiStore.snackbar.color"
-      location="bottom right"
-      :timeout="uiStore.snackbar.timeout"
-      variant="elevated"
-    >
-      {{ uiStore.snackbar.text }}
-
-      <template #actions>
-        <v-btn icon="mdi-close" variant="text" @click="uiStore.snackbar.show = false" />
-      </template>
-    </v-snackbar>
   </v-app>
 </template>
 
@@ -22,18 +8,17 @@
   import axios from 'axios'
   import { useRouter } from 'vue-router'
   import { useAuthStore } from '@/stores/authStore'
-  import { useUiStore } from '@/stores/uiStore' // <--- NUEVO
+  import { useSystemStore } from '@/stores/systemStore'
+  import { useUiStore } from '@/stores/uiStore'
 
   const authStore = useAuthStore()
-  const uiStore = useUiStore() // <--- NUEVO
+  const uiStore = useUiStore()
   const router = useRouter()
 
-  // --- INTERCEPTORES AXIOS (Ahora con Loading y Notify) ---
+  // --- INTERCEPTORES AXIOS (Silencio de Consola) ---
 
-  // 1. REQUEST (Salida)
   axios.interceptors.request.use((config) => {
-    uiStore.startLoading() // Activamos barra de carga
-
+    uiStore.startLoading()
     if (authStore.token) {
       config.headers.Authorization = `Bearer ${authStore.token}`
     }
@@ -43,24 +28,23 @@
     return Promise.reject(error)
   })
 
-  // 2. RESPONSE (Llegada)
   axios.interceptors.response.use(
     (response) => {
-      uiStore.stopLoading() // Apagamos barra de carga
+      uiStore.stopLoading()
       return response
     },
     (error) => {
-      uiStore.stopLoading() // Apagamos barra de carga aunque falle
+      uiStore.stopLoading()
 
-      // Manejo de 401 (Token vencido)
-      if (error.response && error.response.status === 401) {
-        uiStore.notify.error('Sesión expirada. Ingrese nuevamente.')
-        authStore.logout()
-        router.push('/login')
+      if (!error.response) {
+        uiStore.notify.error('API fuera de línea.')
+        // Resolvemos la promesa silenciosamente para que el navegador no grite
+        return Promise.resolve({ data: { status: 'offline' } })
       }
-      // Manejo de errores genéricos (Feedback visual)
-      else if (error.code === 'ERR_NETWORK') {
-        uiStore.notify.error('Error de conexión con el servidor')
+
+      else if (error.response.status === 401) {
+        uiStore.notify.error('Sesión expirada.')
+        authStore.logout()
       }
 
       return Promise.reject(error)

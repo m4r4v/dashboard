@@ -1,101 +1,60 @@
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
-from app.config import settings
-from app.auth import verify_root_credentials, create_access_token
+from app.core.config import settings
+from app.core.database import sessionmanager
+from app.api.routes import auth, system, node
 
-# ==============================================================================
-# MODELOS DE DATOS (DTOs)
-# ==============================================================================
-class LoginRequest(BaseModel):
-    email: str
-    password: str
+logger = logging.getLogger("app")
 
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str
-
-# ==============================================================================
-# GESTIÓN DE CICLO DE VIDA (LIFESPAN) - RF-06/07
-# ==============================================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Se ejecuta al arrancar el servidor.
-    Objetivo 5.2: Forzar la conexión a la BD para crear el archivo .db
-    """
-    print(f"🔄 INICIANDO MOTOR DE BASE DE DATOS: {settings.final_database_url}")
-    
-    # Crear motor (Engine)
-    engine = create_async_engine(settings.final_database_url, echo=True)
-    
-    # Intento de conexión real (Smoke Test de Persistencia)
+    app.state.http_errors_4xx = 0
+    app.state.http_errors_5xx = 0
+
+    sessionmanager.init_db(settings.final_database_url)
+
     try:
-        async with engine.begin() as conn:
-            await conn.execute(text("SELECT 1"))
-        print("✅ PERSISTENCIA VERIFICADA: Conexión exitosa (dashboard.db creado si es local)")
+        async with sessionmanager.session() as session:
+            await session.execute(text("SELECT 1"))
+        logger.info(f"NODE_ONLINE: {settings.node_id}")
     except Exception as e:
-        print(f"❌ ERROR CRÍTICO DE PERSISTENCIA: {e}")
-    
+        logger.error(f"NODE_DEGRADED: {e}")
+
     yield
     
-    # Cierre (Shutdown)
-    await engine.dispose()
-    print("🛑 MOTOR DE BASE DE DATOS APAGADO")
+    if sessionmanager._engine is not None:
+        await sessionmanager.close()
 
-# ==============================================================================
-# ENTRYPOINT FASTAPI
-# ==============================================================================
-app = FastAPI(
-    title="Dashboard Backend",
-    version="1.2.0",
-    lifespan=lifespan, # Vinculamos el ciclo de vida
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
-)
 
-# --- CONFIGURACIÓN CORS (RF-10) ---
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://0.0.0.0:3000", 
-]
+app = FastAPI(title="Stateless Dashboard", version="1.4.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    max_age=600,
 )
 
-# --- ENDPOINTS ---
+@app.middleware("http")
+async def audit_middleware(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
 
-@app.get("/health")
-async def health_check():
-    return {
-        "status": "active",
-        "system": "Stateless Dashboard",
-        "database_mode": "PostgreSQL (Async)" if "postgres" in settings.final_database_url else "SQLite (Local)"
-    }
+    if not any(x in path for x in ["/logs", "/metrics"]) and request.method != "OPTIONS":
+        logger.info(f"AUDIT: {request.method} {path} -> {response.status_code}")
+        
+        if 400 <= response.status_code < 500:
+            request.app.state.http_errors_4xx += 1
+        elif response.status_code >= 500:
+            request.app.state.http_errors_5xx += 1
 
-@app.post("/api/auth/login", response_model=TokenResponse)
-async def login(credentials: LoginRequest):
-    """
-    Objetivo 5.3: Test de Seguridad (Root Secret + Pepper)
-    """
-    # 1. Validar Credenciales (Argon2id vs ROOT_SECRET)
-    is_valid = verify_root_credentials(credentials.email, credentials.password)
-    
-    if not is_valid:
-        raise HTTPException(status_code=401, detail="Credenciales Inválidas (Root Check Failed)")
-    
-    # 2. Generar Token (Firma con ROOT_SECRET + SYSTEM_PEPPER)
-    access_token = create_access_token(
-        data={"sub": credentials.email, "role": "root"}
-    )
-    
-    return {"access_token": access_token, "token_type": "bearer"}
+    return response
+
+app.include_router(auth.router, prefix="/api/auth")
+app.include_router(system.router, prefix="/api/system")
+app.include_router(node.router, prefix="/api/node")
