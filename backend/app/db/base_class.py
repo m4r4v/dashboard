@@ -1,8 +1,7 @@
 import uuid
 from datetime import datetime
 from typing import Any
-from sqlalchemy import DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, Uuid
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -22,8 +21,11 @@ class TimestampMixin:
     )
 
 class UUIDMixin:
+    # Uuid genérico (SQLAlchemy 2.0+), no dialects.postgresql.UUID: el proyecto
+    # también corre sobre SQLite en dev (RF-06), y el tipo específico de Postgres
+    # no es portable entre dialectos.
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True
     )
 
 class BaseModel(Base, UUIDMixin, TimestampMixin):
