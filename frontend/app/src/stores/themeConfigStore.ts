@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { ensureReadableAsText, getContrastingColor } from '@/services/colorContrast'
 
 const STORAGE_KEY = 'themeConfig'
 
@@ -43,10 +44,17 @@ export const useThemeConfigStore = defineStore('themeConfig', () => {
   const fontKey = ref<string>(initial.fontKey)
   const logoDataUrl = ref<string | null>(initial.logoDataUrl)
 
+  function applyColorContrast (root: HTMLElement, cssVar: string, color: string) {
+    const surface = getComputedStyle(root).getPropertyValue('--brand-surface').trim() || '#ffffff'
+    root.style.setProperty(`--brand-${cssVar}`, color)
+    root.style.setProperty(`--brand-${cssVar}-contrast`, getContrastingColor(color))
+    root.style.setProperty(`--brand-${cssVar}-text`, ensureReadableAsText(color, surface))
+  }
+
   function applyToDocument () {
     const root = document.documentElement
-    if (primaryColor.value) root.style.setProperty('--brand-primary', primaryColor.value)
-    if (secondaryColor.value) root.style.setProperty('--brand-secondary', secondaryColor.value)
+    if (primaryColor.value) applyColorContrast(root, 'primary', primaryColor.value)
+    if (secondaryColor.value) applyColorContrast(root, 'secondary', secondaryColor.value)
 
     const font = FONT_OPTIONS.find(f => f.key === fontKey.value) ?? FONT_OPTIONS[FONT_OPTIONS.length - 1]
     root.style.setProperty('--brand-font', font.family)
@@ -84,8 +92,11 @@ export const useThemeConfigStore = defineStore('themeConfig', () => {
     secondaryColor.value = null
     fontKey.value = 'system'
     logoDataUrl.value = null
-    document.documentElement.style.removeProperty('--brand-primary')
-    document.documentElement.style.removeProperty('--brand-secondary')
+    for (const prop of ['primary', 'secondary']) {
+      document.documentElement.style.removeProperty(`--brand-${prop}`)
+      document.documentElement.style.removeProperty(`--brand-${prop}-contrast`)
+      document.documentElement.style.removeProperty(`--brand-${prop}-text`)
+    }
     document.documentElement.style.removeProperty('--brand-font')
     localStorage.removeItem(STORAGE_KEY)
   }
@@ -98,6 +109,7 @@ export const useThemeConfigStore = defineStore('themeConfig', () => {
     secondaryColor,
     fontKey,
     logoDataUrl,
+    applyToDocument,
     setColors,
     setFont,
     setLogo,

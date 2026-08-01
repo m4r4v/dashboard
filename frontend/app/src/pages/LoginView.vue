@@ -36,7 +36,7 @@
       >
 
       <button
-        class="mt-2 flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60"
+        class="mt-2 flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-bold text-primary-contrast transition hover:brightness-110 disabled:opacity-60"
         :disabled="authStore.isLoading"
         type="submit"
       >

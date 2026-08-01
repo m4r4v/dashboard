@@ -26,6 +26,16 @@
   --brand-border: rgba(15, 23, 42, 0.12);
   /* Tipografía de marca (Apariencia > General) — no depende de light/dark. */
   --brand-font: ui-sans-serif, system-ui, sans-serif;
+
+  /* Contraste derivado de primary/secondary — nunca hardcodear texto
+     blanco/negro sobre un color elegido por el usuario, se recalcula
+     (JS, themeConfigStore) cada vez que cambia el color. Estos son los
+     valores para el default de fábrica, ya calculados con la fórmula
+     WCAG (contraste ≥ 4.5:1) para que el default también sea legible. */
+  --brand-primary-contrast: #000000; /* texto sobre un fondo bg-primary sólido */
+  --brand-secondary-contrast: #ffffff; /* texto sobre un fondo bg-secondary sólido */
+  --brand-primary-text: #077d9a; /* primary usado como texto sobre superficie neutra */
+  --brand-secondary-text: var(--brand-secondary);
 }
 
 .dark {
@@ -39,6 +49,11 @@
   --brand-warning: #fbbf24;
   --brand-info: #38bdf8;
   --brand-border: rgba(148, 163, 184, 0.18);
+
+  --brand-primary-contrast: #000000;
+  --brand-secondary-contrast: #000000;
+  --brand-primary-text: var(--brand-primary);
+  --brand-secondary-text: var(--brand-secondary);
 }
 
 @theme {
@@ -47,6 +62,10 @@
   --color-surface-2: var(--brand-surface-2);
   --color-primary: var(--brand-primary);
   --color-secondary: var(--brand-secondary);
+  --color-primary-contrast: var(--brand-primary-contrast);
+  --color-secondary-contrast: var(--brand-secondary-contrast);
+  --color-primary-text: var(--brand-primary-text);
+  --color-secondary-text: var(--brand-secondary-text);
   --color-success: var(--brand-success);
   --color-error: var(--brand-error);
   --color-warning: var(--brand-warning);

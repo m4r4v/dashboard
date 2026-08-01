@@ -5,7 +5,7 @@
       <div class="overflow-hidden rounded-lg border border-brand-border shadow-xl">
         <div class="border-b border-brand-border bg-primary/10 px-6 py-4">
           <img v-if="logoUrl" alt="" class="mb-2 h-8 max-w-[160px] object-contain" :src="logoUrl">
-          <h1 class="font-mono text-sm font-bold uppercase tracking-widest text-primary">
+          <h1 class="font-mono text-sm font-bold uppercase tracking-widest text-primary-text">
             {{ title }}
           </h1>
           <p v-if="subtitle" class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ subtitle }}</p>
