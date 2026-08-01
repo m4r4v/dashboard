@@ -1,5 +1,5 @@
 <template>
-  <AppShell :nav-items="navItems" title="Control Room">
+  <AppShell :nav-items="mainNavItems" title="Control Room">
     <template #actions>
       <StatusDot :status="systemStore.isOnline ? 'online' : 'offline'" label="API" />
       <button class="ml-2 rounded-full p-2 text-gray-500 hover:bg-primary/10 hover:text-primary" @click="themeStore.toggleTheme">
@@ -26,6 +26,7 @@
   import AppShell from '@/components/ui/AppShell.vue'
   import StatusDot from '@/components/ui/StatusDot.vue'
   import SystemStatusDisplay from '@/components/SystemStatusDisplay.vue'
+  import { mainNavItems } from '@/navigation'
   import { useAuthStore } from '@/stores/authStore'
   import { useSystemStore } from '@/stores/systemStore'
   import { useThemeStore } from '@/stores/themeStore'
@@ -33,10 +34,6 @@
   const authStore = useAuthStore()
   const systemStore = useSystemStore()
   const themeStore = useThemeStore()
-
-  const navItems = [
-    { label: 'Dashboard', to: '/' },
-  ]
 
   onMounted(() => {
     systemStore.fetchStatus()
