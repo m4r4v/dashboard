@@ -19,7 +19,7 @@
           :key="tab.key"
           class="border-b-2 px-4 py-2 text-sm font-medium transition"
           :class="activeTab === tab.key
-            ? 'border-primary text-primary'
+            ? 'border-primary text-primary-text'
             : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'"
           type="button"
           @click="activeTab = tab.key"
@@ -73,7 +73,7 @@
       <GlassPanel v-else class="max-w-2xl" title="Ayuda">
         <div class="space-y-7 p-4 text-sm text-gray-700 dark:text-gray-300">
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Qué es este sistema</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Qué es este sistema</h3>
             <p>
               Control Room es un panel de administración con autenticación "Stateless Root": la identidad
               de administrador no depende de una base de datos, se verifica de forma criptográfica contra
@@ -83,7 +83,7 @@
           </section>
 
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Iniciar sesión</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Iniciar sesión</h3>
             <p class="mb-2">
               Ingresá con el correo y contraseña de la cuenta Root configurada para este servidor. Si las
               credenciales son incorrectas, el sistema responde igual sin importar si el correo existe o
@@ -96,7 +96,7 @@
           </section>
 
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">El dashboard principal</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">El dashboard principal</h3>
             <p class="mb-2">
               El panel "API Response Data" consulta el estado del backend en tiempo real. Un fondo verde
               con <code class="rounded bg-surface-2 px-1 font-mono text-xs">"status": "online"</code>
@@ -111,7 +111,7 @@
           </section>
 
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Apariencia · General</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Apariencia · General</h3>
             <p>
               Elegí un color primario (para botones y elementos interactivos) y uno secundario (acento
               estructural de los paneles), más una tipografía de una lista curada. Los cambios se ven de
@@ -121,7 +121,7 @@
           </section>
 
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Apariencia · Identidad</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Apariencia · Identidad</h3>
             <p class="mb-2">
               Subí tu logo corporativo (PNG, JPG o SVG, máximo 2MB). Aparece en la barra superior de
               todas las pantallas y en la pantalla de inicio de sesión.
@@ -134,7 +134,20 @@
           </section>
 
           <section>
-            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Preguntas frecuentes</h3>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Próximamente · Módulos</h3>
+            <p>
+              Este dashboard va a poder ampliarse con módulos propios (monitoreo, métricas, un CRM, lo
+              que necesite cada proyecto) — internos o conectados a una API externa. Todavía no está
+              disponible; cuando lo esté, cada módulo va a declarar cómo se muestra (una tarjeta de
+              estado, un número, un gráfico, una lista), de dónde saca sus datos y con qué frecuencia
+              se actualiza, para que el sistema los pueda organizar sin conocer su lógica interna.
+              Ninguna credencial de conexión se va a poder ingresar desde esta pantalla — como con la
+              base de datos, eso siempre queda del lado del servidor.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary-text">Preguntas frecuentes</h3>
             <dl class="space-y-3">
               <div>
                 <dt class="font-medium text-gray-900 dark:text-gray-100">¿Dónde se guarda mi configuración de apariencia hoy?</dt>

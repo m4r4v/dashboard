@@ -11,5 +11,6 @@ Bienvenido al sistema de documentación viva del **Stateless Dashboard**.
 ## Navegación Rápida
 
 - [Especificación de Requerimientos](architecture/REQUIREMENTS.md)
+- [Contrato de Propiedades de Módulo (diseño)](architecture/MODULE_CONTRACT.md)
 - [Guías de Uso](guides/index.md)
 - [Políticas de Seguridad](security/index.md)
