@@ -24,6 +24,8 @@
   --brand-warning: #d97706;
   --brand-info: #0284c7;
   --brand-border: rgba(15, 23, 42, 0.12);
+  /* Tipografía de marca (Apariencia > General) — no depende de light/dark. */
+  --brand-font: ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
@@ -54,6 +56,9 @@
   /* Stack monoespaciado del sistema para datos técnicos — sin agregar
      un font file nuevo (mantiene el bundle liviano). */
   --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+
+  /* Sobreescribe el font-sans por defecto de Tailwind con el de marca. */
+  --font-sans: var(--brand-font);
 }
 
 body {
