@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Dark mode por clase (toggleada por themeStore), no por prefers-color-scheme.
+   Sintaxis v4: https://tailwindcss.com/docs/dark-mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens de color: mismos valores que el paleta Material por defecto que ya
+   usaba Vuetify (defaultTheme: 'system', sin colores custom) — la variante
+   Tailwind compara técnica, no reinventa la paleta. */
+@theme {
+  --color-primary: #1976d2;
+  --color-secondary: #424242;
+  --color-success: #4caf50;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+  --color-warning: #ff9800;
+}

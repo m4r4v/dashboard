@@ -13,6 +13,7 @@ import App from './App.vue'
 
 // Styles
 import 'unfonts.css'
+import './style.css'
 
 const app = createApp(App)
 
