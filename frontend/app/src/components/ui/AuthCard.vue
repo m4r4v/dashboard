@@ -4,6 +4,7 @@
     <div class="w-full max-w-md">
       <div class="overflow-hidden rounded-lg border border-brand-border shadow-xl">
         <div class="border-b border-brand-border bg-primary/10 px-6 py-4">
+          <img v-if="logoUrl" alt="" class="mb-2 h-8 max-w-[160px] object-contain" :src="logoUrl">
           <h1 class="font-mono text-sm font-bold uppercase tracking-widest text-primary">
             {{ title }}
           </h1>
@@ -25,6 +26,7 @@
 <script setup lang="ts">
   export interface AuthCardProps {
     title: string
+    logoUrl?: string | null
     subtitle?: string
     footer?: string
   }

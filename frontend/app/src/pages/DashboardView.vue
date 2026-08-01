@@ -1,5 +1,5 @@
 <template>
-  <AppShell :nav-items="mainNavItems" title="Control Room">
+  <AppShell :logo-url="themeConfig.logoDataUrl" :nav-items="mainNavItems" title="Control Room">
     <template #actions>
       <StatusDot :status="systemStore.isOnline ? 'online' : 'offline'" label="API" />
       <button class="ml-2 rounded-full p-2 text-gray-500 hover:bg-primary/10 hover:text-primary" @click="themeStore.toggleTheme">
@@ -29,11 +29,13 @@
   import { mainNavItems } from '@/navigation'
   import { useAuthStore } from '@/stores/authStore'
   import { useSystemStore } from '@/stores/systemStore'
+  import { useThemeConfigStore } from '@/stores/themeConfigStore'
   import { useThemeStore } from '@/stores/themeStore'
 
   const authStore = useAuthStore()
   const systemStore = useSystemStore()
   const themeStore = useThemeStore()
+  const themeConfig = useThemeConfigStore()
 
   onMounted(() => {
     systemStore.fetchStatus()

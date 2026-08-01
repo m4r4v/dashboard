@@ -10,6 +10,7 @@
         <IconMdiMenu class="h-6 w-6" />
       </button>
 
+      <img v-if="logoUrl" alt="" class="mr-2 h-6 max-w-[120px] object-contain" :src="logoUrl">
       <h1 class="font-mono text-xs font-bold uppercase tracking-widest text-gray-700 dark:text-gray-200">
         {{ title }}
       </h1>
@@ -57,6 +58,7 @@
 
   export interface AppShellProps {
     title: string
+    logoUrl?: string | null
     navItems?: AppShellNavItem[]
   }
 

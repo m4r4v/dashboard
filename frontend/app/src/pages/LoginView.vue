@@ -1,5 +1,5 @@
 <template>
-  <AuthCard footer="© Dashboard System · Stateless Mode" subtitle="Identifíquese para continuar." title="Control Room">
+  <AuthCard :logo-url="themeConfig.logoDataUrl" footer="© Dashboard System · Stateless Mode" subtitle="Identifíquese para continuar." title="Control Room">
     <div v-if="errorMsg" class="mb-4 rounded-md bg-error/10 px-4 py-3 text-sm text-error">
       {{ errorMsg }}
     </div>
@@ -51,9 +51,11 @@
   import { useRouter } from 'vue-router'
   import AuthCard from '@/components/ui/AuthCard.vue'
   import { useAuthStore } from '@/stores/authStore'
+  import { useThemeConfigStore } from '@/stores/themeConfigStore'
 
   const router = useRouter()
   const authStore = useAuthStore()
+  const themeConfig = useThemeConfigStore()
 
   const email = ref('')
   const password = ref('')

@@ -1,5 +1,5 @@
 <template>
-  <AppShell :nav-items="mainNavItems" title="Control Room">
+  <AppShell :logo-url="themeConfig.logoDataUrl" :nav-items="mainNavItems" title="Control Room">
     <template #actions>
       <button class="rounded-full p-2 text-gray-500 hover:bg-primary/10 hover:text-primary" @click="themeStore.toggleTheme">
         <IconMdiWeatherSunny v-if="themeStore.isDark" class="h-5 w-5" />
@@ -71,18 +71,84 @@
 
       <!-- Ayuda -->
       <GlassPanel v-else class="max-w-2xl" title="Ayuda">
-        <div class="space-y-5 p-4 text-sm text-gray-700 dark:text-gray-300">
+        <div class="space-y-7 p-4 text-sm text-gray-700 dark:text-gray-300">
           <section>
-            <h3 class="mb-1 font-mono text-xs font-bold uppercase text-primary">Iniciar sesión</h3>
-            <p>Ingresá con el correo y contraseña de la cuenta Root del sistema. La sesión se mantiene hasta que cierres sesión o expire el token.</p>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Qué es este sistema</h3>
+            <p>
+              Control Room es un panel de administración con autenticación "Stateless Root": la identidad
+              de administrador no depende de una base de datos, se verifica de forma criptográfica contra
+              variables de entorno del servidor. Esto significa que podés acceder incluso si la
+              persistencia principal está degradada.
+            </p>
           </section>
+
           <section>
-            <h3 class="mb-1 font-mono text-xs font-bold uppercase text-primary">Usar el dashboard</h3>
-            <p>El panel "API Response Data" muestra el estado en vivo del backend, con un botón para sincronizar manualmente. El indicador junto a "API" en la barra superior refleja lo mismo en todo momento.</p>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Iniciar sesión</h3>
+            <p class="mb-2">
+              Ingresá con el correo y contraseña de la cuenta Root configurada para este servidor. Si las
+              credenciales son incorrectas, el sistema responde igual sin importar si el correo existe o
+              no — es intencional, para no revelar información a terceros.
+            </p>
+            <p>
+              La sesión queda activa mientras el token siga vigente. Si te desconecta de forma
+              inesperada, probablemente el token expiró — volvé a iniciar sesión.
+            </p>
           </section>
+
           <section>
-            <h3 class="mb-1 font-mono text-xs font-bold uppercase text-primary">Cambiar apariencia</h3>
-            <p>En Configuración → Apariencia podés elegir tus colores de marca y tipografía, y subir tu logo corporativo. Los cambios se aplican y se guardan al instante en este navegador.</p>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">El dashboard principal</h3>
+            <p class="mb-2">
+              El panel "API Response Data" consulta el estado del backend en tiempo real. Un fondo verde
+              con <code class="rounded bg-surface-2 px-1 font-mono text-xs">"status": "online"</code>
+              significa que el backend respondió correctamente; rojo indica que no pudo conectarse o
+              respondió con error.
+            </p>
+            <p>
+              El botón "Sincronizar" fuerza una consulta inmediata sin esperar al refresco automático. El
+              punto junto a "API" en la barra superior muestra el mismo estado, visible desde cualquier
+              pantalla del sistema.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Apariencia · General</h3>
+            <p>
+              Elegí un color primario (para botones y elementos interactivos) y uno secundario (acento
+              estructural de los paneles), más una tipografía de una lista curada. Los cambios se ven de
+              inmediato en toda la interfaz — no hace falta guardar aparte, cada ajuste se aplica y
+              persiste en este navegador al instante.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Apariencia · Identidad</h3>
+            <p class="mb-2">
+              Subí tu logo corporativo (PNG, JPG o SVG, máximo 2MB). Aparece en la barra superior de
+              todas las pantallas y en la pantalla de inicio de sesión.
+            </p>
+            <p>
+              Al subirlo, el sistema analiza la imagen y sugiere colores dominantes extraídos de ella —
+              son solo sugerencias, hacé clic en cualquiera para aplicarlo como color primario o
+              secundario; nada se aplica automáticamente sin tu confirmación.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="mb-2 font-mono text-xs font-bold uppercase text-primary">Preguntas frecuentes</h3>
+            <dl class="space-y-3">
+              <div>
+                <dt class="font-medium text-gray-900 dark:text-gray-100">¿Dónde se guarda mi configuración de apariencia hoy?</dt>
+                <dd>En este navegador únicamente. Si entrás desde otro dispositivo o navegador, vas a ver la apariencia por defecto — la persistencia en servidor está planeada para una fase posterior.</dd>
+              </div>
+              <div>
+                <dt class="font-medium text-gray-900 dark:text-gray-100">¿Por qué "API" aparece en rojo?</dt>
+                <dd>El backend no respondió o respondió con error. Probá "Sincronizar"; si persiste, es un problema del servidor, no de tu sesión.</dd>
+              </div>
+              <div>
+                <dt class="font-medium text-gray-900 dark:text-gray-100">¿Puedo volver a los colores originales?</dt>
+                <dd>Sí, "Restaurar valores por defecto" en Apariencia → General borra tu personalización y vuelve a los colores base del sistema.</dd>
+              </div>
+            </dl>
           </section>
         </div>
       </GlassPanel>
