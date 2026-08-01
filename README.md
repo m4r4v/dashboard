@@ -91,6 +91,37 @@ Este sistema es una infraestructura de control diseñada bajo la filosofía **St
 * [x] **9.3 Alembic (Version Control)**: Configuración asíncrona del gestor de esquemas. **¿Por qué?** Para evolucionar la estructura de la base de datos sin pérdida de datos. **¿Para qué?** Para permitir actualizaciones seguras de los módulos en producción. *(`backend/alembic/env.py`, ya async y cableado a `settings.final_database_url`.)*
 * [x] **9.4 CRUDBase (Atomic Transactions)**: Implementación de operaciones genéricas con integridad transaccional. **¿Por qué?** Para evitar condiciones de carrera modificando objetos en memoria (`db_obj`). **¿Para qué?** Para proveer al Root de una "Mano Universal" capaz de administrar cualquier tabla del ecosistema. *(`backend/app/crud/base.py`.)*
 
+### FASE 10: Auditoría de Skills & Hardening ✅
+
+*Objetivo: Aplicar `fastapi-m4r4v`, `vuejs-vuetify-m4r4v` y `security-review-m4r4v` (Claude Code)
+sobre el código real, corrigiendo bugs y deuda de seguridad detectados al auditar el proyecto.*
+
+* [x] **10.1 Fix `app.state.engine`**: `check_db_health()` referenciaba un atributo que `main.py`
+  nunca asignaba → `AttributeError` en producción en `/api/system/status` y `/api/node/metrics`.
+  **¿Por qué?** Para que el health check de DB funcione de verdad, no solo en apariencia.
+  *(`backend/app/api/routes/system.py`, ahora usa `sessionmanager.session()`.)*
+* [x] **10.2 Fix `nodeStore.js` sin `Authorization`**: las 3 llamadas a `/api/node/*` (protegidas)
+  se hacían sin el header, así que `NodeControlPanel` nunca mostraba datos reales, solo fallaba en
+  silencio. **¿Para qué?** Para que el panel de eventos del nodo cumpla su propósito real.
+  *(nuevo `frontend/app/src/services/httpClient.js`: instancia axios compartida con interceptor que
+  adjunta el JWT automáticamente — evita repetir el olvido en futuros stores.)*
+* [x] **10.3 Honeypot reforzado server-side**: existía en el frontend pero `/api/auth/login` nunca
+  lo validaba — un bot que ignorase el JS lo esquivaba. **¿Por qué?** Un honeypot que no se aplica en
+  el servidor no filtra nada. *(`backend/app/api/routes/auth.py`; también se corrigió el
+  ocultamiento del campo de `display:none` a posición fuera de pantalla.)*
+* [x] **10.4 `generate_secret.py` sin secretos hardcodeados**: la versión anterior tenía
+  email/password/pepper de ejemplo fijos en el script committeado, violando RNF-01. **¿Para qué?**
+  Para no repetir el mismo error que motivó RNF-01 en primer lugar. *(lee de env, fallback aleatorio.)*
+* [x] **10.5 Docs sincronizadas**: `.ai/TECHNICAL_CTX.md` (vacío) y `.ai/BEHAVIOR.md` (ruta de
+  backend incorrecta) corregidos junto con el checklist de Fase 9 de este mismo README.
+
+**Estructura nueva:** `frontend/app/src/services/` — capa de cliente HTTP compartido (antes cada
+store llamaba a `axios` directo). Ver `.ai/TECHNICAL_CTX.md` para el árbol de directorios completo y
+actualizado; no se duplica aquí para no repetir la misma desalineación doc/código que esta fase corrigió.
+
+Verificado end-to-end con contenedores reales antes de mergear: login → token → endpoints
+protegidos con datos reales, y rechazo de honeypot confirmado en el log de auditoría en vivo.
+
 ---
 
 ## 🛠 Comandos de Operación
