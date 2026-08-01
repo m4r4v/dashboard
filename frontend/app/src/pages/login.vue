@@ -58,7 +58,14 @@
                 @click:append-inner="showPass = !showPass"
               />
 
-              <input v-model="honeypot" class="d-none" tabindex="-1">
+              <!-- [CORREGIDO] display:none (antes "d-none") lo detectan algunos bots
+                   y lo saltan; oculto fuera de pantalla en su lugar. -->
+              <input
+                v-model="honeypot"
+                autocomplete="off"
+                style="position: absolute; left: -9999px;"
+                tabindex="-1"
+              >
 
               <v-btn
                 block
@@ -110,7 +117,7 @@
     errorMsg.value = null
 
     try {
-      await authStore.login(email.value, password.value)
+      await authStore.login(email.value, password.value, honeypot.value)
       router.push('/')
     } catch (error: any) {
       errorMsg.value = error.response?.status === 401 ? 'Acceso denegado.' : 'Servidor no disponible.';

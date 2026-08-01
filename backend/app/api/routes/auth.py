@@ -10,6 +10,7 @@ router = APIRouter()
 class LoginRequest(BaseModel):
     email: str
     password: str
+    honeypot: str = ""  # campo señuelo del form; un humano nunca lo llena
 
 
 class TokenResponse(BaseModel):
@@ -19,6 +20,14 @@ class TokenResponse(BaseModel):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(credentials: LoginRequest):
+    # [CORREGIDO] El honeypot ya existía en el frontend pero nunca se validaba
+    # acá — un bot que ignorase el JS y pegara directo a este endpoint lo
+    # esquivaba por completo. Misma respuesta que credenciales inválidas, sin
+    # distinguir el motivo, para no darle información al bot.
+    if credentials.honeypot:
+        logger.warning(f"BOT DETECTADO: honeypot lleno en intento de login ({credentials.email})")
+        raise HTTPException(status_code=401, detail="Credenciales Inválidas")
+
     is_valid = verify_root_credentials(credentials.email, credentials.password)
 
     if not is_valid:
