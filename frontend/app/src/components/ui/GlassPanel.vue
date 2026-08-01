@@ -44,8 +44,12 @@
 
   const borderClass = computed(() => accentColorMap[props.accent ?? 'neutral'])
 
+  // "neutral" usa secondary, no primary: primary queda reservado para
+  // botones/acciones; secondary es el acento estructural/decorativo de los
+  // paneles (así secondary tiene un lugar visible real, no solo un color
+  // que se puede elegir pero nunca se ve en ningún lado).
   const cornerColorMap: Record<NonNullable<GlassPanelProps['accent']>, string> = {
-    neutral: 'border-primary',
+    neutral: 'border-secondary',
     success: 'border-success',
     error: 'border-error',
     warning: 'border-warning',
