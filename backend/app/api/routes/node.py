@@ -29,7 +29,7 @@ if not any(isinstance(h, InMemoryLogHandler) for h in logger.handlers):
 
 @router.get("/metrics", response_class=PlainTextResponse)
 async def get_metrics(request: Request, current_root: dict = Depends(get_current_root)):
-    db_status = await check_db_health(request)
+    db_status = await check_db_health()
     c_4xx = getattr(request.app.state, "http_errors_4xx", 0)
     c_5xx = getattr(request.app.state, "http_errors_5xx", 0)
     

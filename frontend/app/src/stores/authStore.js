@@ -11,11 +11,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
   const isRoot = computed(() => isAuthenticated.value && user.value?.role === 'root')
 
-  async function login(email, password) {
+  async function login(email, password, honeypot = '') {
     isLoading.value = true // <--- AHORA EXISTE
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password })
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password, honeypot })
 
       token.value = response.data.access_token
       user.value = { email, role: 'root' }

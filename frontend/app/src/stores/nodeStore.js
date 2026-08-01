@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import httpClient from '@/services/httpClient'
 
 export const useNodeStore = defineStore('node', () => {
   const nodeInfo = ref(null)
@@ -8,13 +8,14 @@ export const useNodeStore = defineStore('node', () => {
   const isLoading = ref(false)
   const isActionPending = ref(false)
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
   // 1. Identidad y Salud (Node ID + Uptime + RAM)
+  // [CORREGIDO] Estas 3 rutas son protegidas (Depends(get_current_root) en el
+  // backend) y antes se llamaban sin el header Authorization -> 403 silencioso
+  // siempre. httpClient lo adjunta automáticamente vía interceptor.
   async function fetchNodeStatus() {
     isLoading.value = true
     try {
-      const { data } = await axios.get(`${API_BASE}/api/node/status`)
+      const { data } = await httpClient.get('/api/node/status')
       nodeInfo.value = data
     } catch {
       nodeInfo.value = null
@@ -26,7 +27,7 @@ export const useNodeStore = defineStore('node', () => {
   // 2. Búfer de Eventos (Ruta B)
   async function fetchLogs() {
     try {
-      const { data } = await axios.get(`${API_BASE}/api/node/logs`)
+      const { data } = await httpClient.get('/api/node/logs')
       logs.value = data
     } catch {
       logs.value = []
@@ -39,7 +40,7 @@ export const useNodeStore = defineStore('node', () => {
 
     isActionPending.value = true
     try {
-      const { data } = await axios.post(`${API_BASE}/api/node/action`, null, {
+      const { data } = await httpClient.post('/api/node/action', null, {
         params: { action: actionName }
       })
 

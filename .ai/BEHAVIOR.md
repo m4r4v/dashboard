@@ -42,7 +42,7 @@ We reject manual copy-pasting of secrets to prevent human error.
 
 ### 3.1 Directory Map
 
-- **Backend Source:** `/backend/api` (Not `src`)
+- **Backend Source:** `/backend/app/api` (Not `src`)
 - **Frontend Source:** `/frontend/app` (Not `src`)
 - **Automation Tools:** `/docs/guides/scripts`
 

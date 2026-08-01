@@ -79,14 +79,17 @@ Este sistema es una infraestructura de control diseñada bajo la filosofía **St
 * [x] **8.3 Atomic Auditing**: Implementación de `InMemoryLogHandler`. **¿Por qué?** Para capturar logs `INFO` en un búfer de RAM, garantizando un panel de eventos siempre actualizado.
 * [x] **8.4 Smoke Test Suite**: Script de validación automatizada (`smoke_test.py`). **¿Para qué?** Para certificar que la seguridad y la telemetría son funcionales tras cada cambio de código.
 
-### FASE 9: INFRASTRUCTURE ENABLERS (Data Hub) 🚧
+### FASE 9: INFRASTRUCTURE ENABLERS (Data Hub) ✅
 
 *Objetivo: Construir el Framework de Datos Blindado y el Hub de Conexiones Dinámicas. Sin lógica de negocio.*
 
-* [ ] **9.1 BaseModel (Data Contract)**: Definición de la clase maestra con UUIDv4 y Timestamps. **¿Por qué?** Para garantizar unicidad global y auditoría en todas las tablas futuras. **¿Para qué?** Para que el Root pueda gestionar datos de cualquier módulo mediante una interfaz universal.
-* [ ] **9.2 SessionManager (Connection Hub)**: Motor de mapeo `.env` -> Conexiones. **¿Por qué?** Para permitir que el sistema se conecte a múltiples bases de datos (plugins) sin tocar el código fuente. **¿Para qué?** Para que el Root pueda "instalar" nuevos módulos (Ticketera, Inventario) simplemente configurando variables de entorno.
-* [ ] **9.3 Alembic (Version Control)**: Configuración asíncrona del gestor de esquemas. **¿Por qué?** Para evolucionar la estructura de la base de datos sin pérdida de datos. **¿Para qué?** Para permitir actualizaciones seguras de los módulos en producción.
-* [ ] **9.4 CRUDBase (Atomic Transactions)**: Implementación de operaciones genéricas con integridad transaccional. **¿Por qué?** Para evitar condiciones de carrera modificando objetos en memoria (`db_obj`). **¿Para qué?** Para proveer al Root de una "Mano Universal" capaz de administrar cualquier tabla del ecosistema.
+> Checklist actualizado: los 4 puntos ya estaban implementados en código pero no se habían marcado
+> aquí — docs desalineadas con la realidad, corregido junto con el resto de la auditoría de skills.
+
+* [x] **9.1 BaseModel (Data Contract)**: Definición de la clase maestra con UUIDv4 y Timestamps. **¿Por qué?** Para garantizar unicidad global y auditoría en todas las tablas futuras. **¿Para qué?** Para que el Root pueda gestionar datos de cualquier módulo mediante una interfaz universal. *(`backend/app/db/base_class.py`; `UUIDMixin` usa `sqlalchemy.Uuid` genérico, no el tipo específico de Postgres, para ser compatible con SQLite en dev.)*
+* [x] **9.2 SessionManager (Connection Hub)**: Motor de mapeo `.env` -> Conexiones. **¿Por qué?** Para permitir que el sistema se conecte a múltiples bases de datos (plugins) sin tocar el código fuente. **¿Para qué?** Para que el Root pueda "instalar" nuevos módulos (Ticketera, Inventario) simplemente configurando variables de entorno. *(`backend/app/core/database.py`, `DatabaseSessionManager`.)*
+* [x] **9.3 Alembic (Version Control)**: Configuración asíncrona del gestor de esquemas. **¿Por qué?** Para evolucionar la estructura de la base de datos sin pérdida de datos. **¿Para qué?** Para permitir actualizaciones seguras de los módulos en producción. *(`backend/alembic/env.py`, ya async y cableado a `settings.final_database_url`.)*
+* [x] **9.4 CRUDBase (Atomic Transactions)**: Implementación de operaciones genéricas con integridad transaccional. **¿Por qué?** Para evitar condiciones de carrera modificando objetos en memoria (`db_obj`). **¿Para qué?** Para proveer al Root de una "Mano Universal" capaz de administrar cualquier tabla del ecosistema. *(`backend/app/crud/base.py`.)*
 
 ---
 
