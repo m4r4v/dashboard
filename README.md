@@ -100,11 +100,19 @@ sobre el código real, corrigiendo bugs y deuda de seguridad detectados al audit
   nunca asignaba → `AttributeError` en producción en `/api/system/status` y `/api/node/metrics`.
   **¿Por qué?** Para que el health check de DB funcione de verdad, no solo en apariencia.
   *(`backend/app/api/routes/system.py`, ahora usa `sessionmanager.session()`.)*
-* [x] **10.2 Fix `nodeStore.js` sin `Authorization`**: las 3 llamadas a `/api/node/*` (protegidas)
-  se hacían sin el header, así que `NodeControlPanel` nunca mostraba datos reales, solo fallaba en
-  silencio. **¿Para qué?** Para que el panel de eventos del nodo cumpla su propósito real.
-  *(nuevo `frontend/app/src/services/httpClient.js`: instancia axios compartida con interceptor que
-  adjunta el JWT automáticamente — evita repetir el olvido en futuros stores.)*
+* [x] **10.2 `nodeStore.js` sin `Authorization` explícito**: las 3 llamadas a `/api/node/*`
+  (protegidas) no adjuntaban el header directamente. **¿Para qué?** Centralizar el envío del JWT en
+  un solo lugar en vez de que cada store tenga que recordar hacerlo.
+  *(nuevo `frontend/app/src/services/httpClient.js`: instancia axios dedicada con interceptor.)*
+  > ⚠️ **Corrección (hallazgo posterior):** esto se documentó originalmente como "bug — siempre
+  > fallaba en silencio", pero esa afirmación **no estaba verificada**: `App.vue` ya registraba un
+  > interceptor global sobre la instancia compartida de `axios` (`axios.interceptors.request.use`
+  > en su `setup()`) que adjuntaba el mismo header a *todas* las llamadas de la app, incluidas las de
+  > `nodeStore.js`, desde antes de este cambio. No se confirmó el bug contra el código original antes
+  > de "arreglarlo" — el cambio a `httpClient.js` sigue siendo una mejora arquitectónica razonable
+  > (instancia dedicada en vez de mutar el singleton global de `axios` desde un componente), pero no
+  > corrigió un fallo real confirmado. Lección: verificar un hallazgo contra el código real completo
+  > (incluido `App.vue`, que no se había leído) antes de reportarlo como bug.
 * [x] **10.3 Honeypot reforzado server-side**: existía en el frontend pero `/api/auth/login` nunca
   lo validaba — un bot que ignorase el JS lo esquivaba. **¿Por qué?** Un honeypot que no se aplica en
   el servidor no filtra nada. *(`backend/app/api/routes/auth.py`; también se corrigió el
