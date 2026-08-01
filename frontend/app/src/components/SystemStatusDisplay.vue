@@ -1,61 +1,30 @@
 <template>
-  <v-card class="rounded-md overflow-hidden" color="primary" variant="outlined">
-
-    <v-card-title class="px-4 pt-4 text-overline text-medium-emphasis text-info">
+  <div class="overflow-hidden rounded-md border border-primary">
+    <div class="px-4 pt-4 text-xs font-medium uppercase tracking-wide text-info">
       API Response Data
-    </v-card-title>
+    </div>
 
-    <v-card-text>
-      <div class="debug-display-wrapper">
-        <pre
-          class="pa-4 rounded shadow-inner bg-grey-darken-4 monospace-text"
-          :class="systemStore.isOnline ? 'text-green-accent-3' : 'text-red-accent-3'"
-        >{{ systemStore.status || 'Esperando sincronización...' }}</pre>
-      </div>
-    </v-card-text>
+    <div class="p-4">
+      <pre
+        class="min-h-[120px] overflow-y-auto whitespace-pre-wrap break-words rounded bg-gray-900 p-4 font-mono text-sm shadow-inner transition-colors"
+        :class="systemStore.isOnline ? 'text-green-400' : 'text-red-400'"
+      >{{ systemStore.status || 'Esperando sincronización...' }}</pre>
+    </div>
 
-    <v-card-actions class="px-4 pb-4">
-      <v-btn
-        color="primary"
-        :loading="systemStore.isLoading"
-        prepend-icon="mdi-refresh"
-        variant="flat"
+    <div class="px-4 pb-4">
+      <button
+        class="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-60"
+        :disabled="systemStore.isLoading"
         @click="systemStore.fetchStatus()"
       >
+        <IconMdiRefresh class="h-4 w-4" :class="systemStore.isLoading ? 'animate-spin' : ''" />
         Sincronizar
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
   import { useSystemStore } from '@/stores/systemStore'
   const systemStore = useSystemStore()
 </script>
-
-<style scoped>
-.debug-display-wrapper {
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-}
-
-pre {
-  margin: 0;
-  min-height: 120px;
-  font-size: 0.875rem;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  transition: color 0.4s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.monospace-text {
-  font-family: 'Fira Code', 'Courier New', monospace !important;
-}
-
-.shadow-inner {
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-</style>

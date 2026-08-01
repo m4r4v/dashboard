@@ -1,34 +1,31 @@
 <template>
-  <v-card class="rounded-lg overflow-hidden d-flex flex-column" color="primary" height="420" variant="outlined">
-    <v-card-title class="d-flex align-center pa-3 bg-grey-lighten-4 border-b flex-none">
-      <v-icon class="mr-2" color="primary" icon="mdi-xml" size="small" />
-      <span class="text-caption font-weight-bold text-uppercase">Node Events</span>
-      <v-spacer />
-      <v-chip
+  <div class="flex h-[420px] flex-col overflow-hidden rounded-lg border border-primary">
+    <div class="flex flex-none items-center border-b border-gray-200 bg-gray-100 px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+      <IconMdiXml class="mr-2 h-4 w-4 text-primary" />
+      <span class="text-xs font-bold uppercase">Node Events</span>
+      <div class="flex-1" />
+      <span
         v-if="nodeStore.nodeInfo"
-        color="accent"
-        label
-        size="x-small"
-        variant="flat"
+        class="rounded bg-accent px-2 py-0.5 text-xs font-bold text-white"
       >
         HOST: {{ nodeStore.nodeInfo.node_id }}
-      </v-chip>
-    </v-card-title>
+      </span>
+    </div>
 
-    <div class="px-4 py-2 bg-grey-lighten-5 d-flex gap-4 border-b flex-none">
-      <div class="text-caption">
-        <span class="text-medium-emphasis text-primary">UPTIME:</span>
-        <span class="font-weight-bold ml-1 text-info">{{ formatUptime(nodeStore.nodeInfo?.uptime_seconds || 0) }}</span>
+    <div class="flex flex-none items-center gap-4 border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900">
+      <div class="text-xs">
+        <span class="text-primary/70">UPTIME:</span>
+        <span class="ml-1 font-bold text-info">{{ formatUptime(nodeStore.nodeInfo?.uptime_seconds || 0) }}</span>
       </div>
-      <v-divider class="mx-2" vertical />
-      <div class="text-caption">
-        <span class="text-medium-emphasis text-primary">MEM:</span>
-        <span class="font-weight-bold ml-1 text-info">{{ nodeStore.nodeInfo?.memory_usage_mb.toFixed(1) }}MB</span>
+      <div class="h-4 w-px bg-gray-300 dark:bg-gray-600" />
+      <div class="text-xs">
+        <span class="text-primary/70">MEM:</span>
+        <span class="ml-1 font-bold text-info">{{ nodeStore.nodeInfo?.memory_usage_mb.toFixed(1) }}MB</span>
       </div>
     </div>
 
-    <v-card-text class="pa-0 flex-grow-1 bg-grey-darken-4 overflow-hidden d-flex flex-column" style="min-height: 0;">
-      <pre ref="logContainer" class="log-viewer pa-3">
+    <div class="min-h-0 flex-1 overflow-hidden bg-gray-950">
+      <pre ref="logContainer" class="log-viewer p-3">
         <template v-if="nodeStore.logs.length > 0">
           <div v-for="(log, i) in nodeStore.logs" :key="i" class="log-row">
             <span class="log-time">[{{ log.timestamp.split(' ')[1] }}]</span>
@@ -37,40 +34,32 @@
           </div>
         </template>
         <template v-else>
-          <div class="pa-4 text-grey-darken-1 text-caption italic">No hay eventos registrados en el búfer.</div>
+          <div class="p-4 text-xs italic text-gray-500">No hay eventos registrados en el búfer.</div>
         </template>
       </pre>
-    </v-card-text>
+    </div>
 
-    <v-divider />
-    <v-card-actions class="pa-2 bg-grey-lighten-4 flex-none">
-      <v-btn
-        color="primary"
-        :loading="nodeStore.isActionPending"
-        prepend-icon="mdi-sync"
-        size="x-small"
-        variant="flat"
+    <div class="flex flex-none items-center gap-2 border-t border-gray-200 bg-gray-100 px-2 py-2 dark:border-gray-700 dark:bg-gray-800">
+      <button
+        class="flex items-center gap-1 rounded bg-primary px-2 py-1 text-xs font-medium text-white hover:brightness-110 disabled:opacity-60"
+        :disabled="nodeStore.isActionPending"
         @click="runAction('RELOAD_RESOURCES')"
       >
+        <IconMdiSync class="h-3.5 w-3.5" :class="nodeStore.isActionPending ? 'animate-spin' : ''" />
         Sync Server State
-      </v-btn>
+      </button>
 
-      <v-spacer />
+      <div class="flex-1" />
 
-      <v-tooltip location="top" text="Forzar actualización de logs">
-        <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            :class="{ 'refreshing-anim': nodeStore.isLoading }"
-            icon="mdi-refresh"
-            size="x-small"
-            variant="text"
-            @click="refreshAll"
-          />
-        </template>
-      </v-tooltip>
-    </v-card-actions>
-  </v-card>
+      <button
+        class="rounded p-1 text-gray-500 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
+        title="Forzar actualización de logs"
+        @click="refreshAll"
+      >
+        <IconMdiRefresh class="h-4 w-4" :class="{ 'refreshing-anim': nodeStore.isLoading }" />
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -104,12 +93,11 @@
   }
 
   function getLevelClass (level: string) {
-    if (level === 'ERROR') return 'text-red-lighten-2'
-    if (level === 'WARNING') return 'text-orange-lighten-2'
-    return 'text-blue-lighten-3'
+    if (level === 'ERROR') return 'text-red-400'
+    if (level === 'WARNING') return 'text-orange-400'
+    return 'text-blue-300'
   }
 
-  // Scroll automático al final cuando llegan nuevos logs
   watch(() => nodeStore.logs, () => {
     setTimeout(() => {
       if (logContainer.value) {
@@ -136,13 +124,12 @@
 }
 
 .log-viewer {
-  flex-grow: 1;
+  height: 100%;
   overflow-y: auto;
   font-family: 'Fira Code', monospace;
   font-size: 11px;
   line-height: 1.3;
   color: #eceff1;
-  background-color: #121212;
 }
 
 .log-row {
@@ -166,16 +153,5 @@
 .log-msg {
   word-break: break-all;
   white-space: pre-wrap;
-}
-
-.flex-none { flex: none; }
-.gap-4 { gap: 16px; }
-
-.rotate-animation {
-  animation: rotate 1s linear infinite;
-}
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 </style>

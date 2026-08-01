@@ -1,39 +1,30 @@
 <template>
-  <v-container v-if="authStore.isAuthenticated" class="pa-6" fluid>
-
-    <v-row align="center" class="mb-6">
-      <v-col>
-        <h1 class="text-h4 font-weight-bold text-primary">System Dashboard</h1>
-        <div class="text-subtitle-1 text-medium-emphasis">
-          Nodo: <span class="text-info font-weight-bold">{{ node_id }}</span>
+  <div v-if="authStore.isAuthenticated" class="p-6">
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-primary">System Dashboard</h1>
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+          Nodo: <span class="font-bold text-info">{{ node_id }}</span>
         </div>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn
-          color="error"
-          prepend-icon="mdi-logout"
-          variant="tonal"
-          @click="authStore.logout"
-        >
-          Cerrar Sesión
-        </v-btn>
-      </v-col>
-    </v-row>
+      </div>
+      <button
+        class="flex items-center gap-2 rounded-md bg-error/10 px-4 py-2 text-sm font-medium text-error hover:bg-error/20"
+        @click="authStore.logout"
+      >
+        <IconMdiLogout class="h-4 w-4" />
+        Cerrar Sesión
+      </button>
+    </div>
 
-    <v-row>
-      <v-col cols="12" :md="authStore.isRoot ? 6 : 12">
-        <SystemStatusDisplay />
-      </v-col>
+    <div class="grid grid-cols-1 gap-6" :class="authStore.isRoot ? 'md:grid-cols-2' : ''">
+      <SystemStatusDisplay />
+      <NodeControlPanel v-if="authStore.isRoot" />
+    </div>
+  </div>
 
-      <v-col v-if="authStore.isRoot" cols="12" md="6">
-        <NodeControlPanel />
-      </v-col>
-    </v-row>
-  </v-container>
-
-  <v-container v-else class="fill-height d-flex align-center justify-center">
-    <v-progress-circular color="primary" indeterminate size="64" />
-  </v-container>
+  <div v-else class="flex min-h-screen items-center justify-center">
+    <div class="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -50,7 +41,6 @@
 
   const node_id = computed(() => systemStore.status?.node_id || 'Cargando...')
 
-  // Seguridad Reactiva: Si el estado cambia a "no autenticado", fuera de aquí.
   watchEffect(() => {
     if (!authStore.isAuthenticated) {
       router.push('/login')
