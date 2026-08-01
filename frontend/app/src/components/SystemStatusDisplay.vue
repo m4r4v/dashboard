@@ -1,61 +1,28 @@
 <template>
-  <v-card class="rounded-md overflow-hidden" color="primary" variant="outlined">
-
-    <v-card-title class="px-4 pt-4 text-overline text-medium-emphasis text-info">
-      API Response Data
-    </v-card-title>
-
-    <v-card-text>
-      <div class="debug-display-wrapper">
-        <pre
-          class="pa-4 rounded shadow-inner bg-grey-darken-4 monospace-text"
-          :class="systemStore.isOnline ? 'text-green-accent-3' : 'text-red-accent-3'"
-        >{{ systemStore.status || 'Esperando sincronización...' }}</pre>
-      </div>
-    </v-card-text>
-
-    <v-card-actions class="px-4 pb-4">
-      <v-btn
-        color="primary"
-        :loading="systemStore.isLoading"
-        prepend-icon="mdi-refresh"
-        variant="flat"
+  <GlassPanel :accent="systemStore.isOnline ? 'success' : 'error'" title="API Response Data">
+    <template #actions>
+      <button
+        class="flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:brightness-110 disabled:opacity-60"
+        :disabled="systemStore.isLoading"
         @click="systemStore.fetchStatus()"
       >
+        <IconMdiRefresh class="h-3.5 w-3.5" :class="systemStore.isLoading ? 'animate-spin' : ''" />
         Sincronizar
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+      </button>
+    </template>
+
+    <div class="p-4">
+      <pre
+        class="min-h-[120px] overflow-y-auto whitespace-pre-wrap break-words rounded bg-surface-2 p-4 font-mono text-sm"
+        :class="systemStore.isOnline ? 'text-success' : 'text-error'"
+      >{{ systemStore.status || 'Esperando sincronización...' }}</pre>
+    </div>
+  </GlassPanel>
 </template>
 
 <script setup lang="ts">
+  import GlassPanel from '@/components/ui/GlassPanel.vue'
   import { useSystemStore } from '@/stores/systemStore'
+
   const systemStore = useSystemStore()
 </script>
-
-<style scoped>
-.debug-display-wrapper {
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-}
-
-pre {
-  margin: 0;
-  min-height: 120px;
-  font-size: 0.875rem;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  transition: color 0.4s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.monospace-text {
-  font-family: 'Fira Code', 'Courier New', monospace !important;
-}
-
-.shadow-inner {
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-</style>

@@ -1,53 +1,28 @@
 <template>
-  <v-app>
-    <router-view />
-  </v-app>
+  <router-view />
+
+  <div
+    v-if="uiStore.snackbar.show"
+    class="fixed right-4 top-4 z-50 flex items-center gap-3 rounded-md px-4 py-3 text-sm text-white shadow-lg"
+    :class="snackbarColorClass"
+  >
+    {{ uiStore.snackbar.text }}
+    <button class="text-white/80 hover:text-white" @click="uiStore.snackbar.show = false">
+      <IconMdiClose class="h-4 w-4" />
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
-  import axios from 'axios'
-  import { useRouter } from 'vue-router'
-  import { useAuthStore } from '@/stores/authStore'
-  import { useSystemStore } from '@/stores/systemStore'
+  import { computed } from 'vue'
   import { useUiStore } from '@/stores/uiStore'
 
-  const authStore = useAuthStore()
   const uiStore = useUiStore()
-  const router = useRouter()
 
-  // --- INTERCEPTORES AXIOS (Silencio de Consola) ---
-
-  axios.interceptors.request.use((config) => {
-    uiStore.startLoading()
-    if (authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`
-    }
-    return config
-  }, (error) => {
-    uiStore.stopLoading()
-    return Promise.reject(error)
-  })
-
-  axios.interceptors.response.use(
-    (response) => {
-      uiStore.stopLoading()
-      return response
-    },
-    (error) => {
-      uiStore.stopLoading()
-
-      if (!error.response) {
-        uiStore.notify.error('API fuera de línea.')
-        // Resolvemos la promesa silenciosamente para que el navegador no grite
-        return Promise.resolve({ data: { status: 'offline' } })
-      }
-
-      else if (error.response.status === 401) {
-        uiStore.notify.error('Sesión expirada.')
-        authStore.logout()
-      }
-
-      return Promise.reject(error)
-    }
-  )
+  const snackbarColorClass = computed(() => ({
+    success: 'bg-success',
+    error: 'bg-error',
+    warning: 'bg-warning',
+    info: 'bg-info',
+  }[uiStore.snackbar.color]))
 </script>
